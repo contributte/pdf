@@ -1,1 +1,1 @@
-Disallow: /mpdf
+Disallow: /mPDF
