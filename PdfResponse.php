@@ -23,7 +23,7 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IPresenter
      * path to mPDF.php
      * @var string
      */
-    public static $mPDFPath = "%libsDir%/mpdf/mpdf.php";
+    public static $mPDFPath = "%libsDir%/PdfResponse/mPDF/mpdf.php";
     /**
      * Source data
      * @var mixed
