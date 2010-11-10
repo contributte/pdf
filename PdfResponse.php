@@ -233,6 +233,7 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IPresenter
         $mpdf->SetAuthor($this->documentAuthor);
         $mpdf->SetTitle($this->documentTitle);
         $mpdf->SetDisplayMode($this->displayZoom, $this->displayLayout);
+        $mpdf->showImageErrors = true; 
 
         // @see: http://mpdf1.com/manual/index.php?tid=121&searchstring=writeHTML
         if ($this->ignoreStylesInHTMLDocument) {
