@@ -2,6 +2,10 @@
 
 namespace PdfResponse;
 
+use Nette\Application\IPresenterResponse,
+ \Nette\Web\IHttpRequest,
+ \Nette\Web\IHttpResponse;
+
 /**
  * PdfResponse
  * -----------
@@ -17,7 +21,7 @@ namespace PdfResponse;
 /**
  * @property-read mPDFExtended $mPDF
  */
-class PdfResponse extends \Nette\Object implements \Nette\Application\IPresenterResponse {
+class PdfResponse extends \Nette\Object implements IPresenterResponse {
 
     /**
      * path to mPDF.php
@@ -214,7 +218,7 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IPresenter
      * Sends response to output.
      * @return void
      */
-    public function send() {
+    function send( IHttpRequest $httpRequest, IHttpResponse $httpResponse) {
         if ($this->source instanceof ITemplate) {
             $this->source->pdfResponse = $this;
             $this->source->mPDF = $this->getMPDF();
@@ -233,7 +237,7 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IPresenter
         $mpdf->SetAuthor($this->documentAuthor);
         $mpdf->SetTitle($this->documentTitle);
         $mpdf->SetDisplayMode($this->displayZoom, $this->displayLayout);
-        $mpdf->showImageErrors = true; 
+        $mpdf->showImageErrors = true;
 
         // @see: http://mpdf1.com/manual/index.php?tid=121&searchstring=writeHTML
         if ($this->ignoreStylesInHTMLDocument) {
