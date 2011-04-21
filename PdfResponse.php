@@ -2,9 +2,9 @@
 
 namespace PdfResponse;
 
-use Nette\Application\IPresenterResponse,
- \Nette\Web\IHttpRequest,
- \Nette\Web\IHttpResponse;
+use Nette\Application\IResponse,
+ Nette\Http\IRequest,
+ Nette\Web\IHttpResponse as IResponse_;
 
 /**
  * PdfResponse
@@ -21,7 +21,7 @@ use Nette\Application\IPresenterResponse,
 /**
  * @property-read mPDFExtended $mPDF
  */
-class PdfResponse extends \Nette\Object implements IPresenterResponse {
+class PdfResponse extends \Nette\Object implements IResponse {
 
     /**
      * path to mPDF.php
@@ -218,7 +218,7 @@ class PdfResponse extends \Nette\Object implements IPresenterResponse {
      * Sends response to output.
      * @return void
      */
-    function send( IHttpRequest $httpRequest, IHttpResponse $httpResponse) {
+    function send( IRequest $httpRequest, IResponse_ $httpResponse) {
         if ($this->source instanceof ITemplate) {
             $this->source->pdfResponse = $this;
             $this->source->mPDF = $this->getMPDF();
@@ -275,7 +275,7 @@ class PdfResponse extends \Nette\Object implements IPresenterResponse {
 
         $this->onBeforeComplete($mpdf);
 
-        $mpdf->Output(\Nette\String::webalize($this->documentTitle), 'I');
+        $mpdf->Output(\Nette\Utils\Strings::webalize($this->documentTitle), 'I');
     }
 
     /**
@@ -287,11 +287,11 @@ class PdfResponse extends \Nette\Object implements IPresenterResponse {
             if ($this->createMPDF instanceof \Nette\Callback and $this->createMPDF->isCallable()) {
                 $mpdf = $this->createMPDF->invoke($this);
                 if (!($mpdf instanceof \mPDF)) {
-                    throw new \InvalidStateException("Callback function createMPDF must return mPDF object!");
+                    throw new \Nette\InvalidStateException("Callback function createMPDF must return mPDF object!");
                 }
                 $this->mPDF = $mpdf;
             }else
-                throw new \InvalidStateException("Callback createMPDF is not callable or is not instance of Nette\Callback!");
+                throw new \Nette\InvalidStateException("Callback createMPDF is not callable or is not instance of Nette\Callback!");
         }
         return $this->mPDF;
     }
