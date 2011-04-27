@@ -2,9 +2,6 @@
 
 namespace PdfResponse;
 
-use Nette\Application\IResponse,
- Nette\Http\IRequest,
- Nette\Web\IHttpResponse as IResponse_;
 
 /**
  * PdfResponse
@@ -21,7 +18,7 @@ use Nette\Application\IResponse,
 /**
  * @property-read mPDFExtended $mPDF
  */
-class PdfResponse extends \Nette\Object implements IResponse {
+class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse {
 
     /**
      * path to mPDF.php
@@ -218,7 +215,7 @@ class PdfResponse extends \Nette\Object implements IResponse {
      * Sends response to output.
      * @return void
      */
-    function send( IRequest $httpRequest, IResponse_ $httpResponse) {
+    function send( \Nette\Http\IRequest $httpRequest, \Nette\Http\IResponse $httpResponse) {
         if ($this->source instanceof ITemplate) {
             $this->source->pdfResponse = $this;
             $this->source->mPDF = $this->getMPDF();
