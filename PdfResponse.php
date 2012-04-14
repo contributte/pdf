@@ -2,6 +2,13 @@
 
 namespace PdfResponse;
 
+use Nette\Object,
+	Nette\Application\IResponse,
+	Nette\Callback,
+	Nette\Environment,
+	Nette\Utils\Strings,
+	Nette\Templating\Itemplate,
+	mPDF;
 
 /**
  * PdfResponse
@@ -10,6 +17,7 @@ namespace PdfResponse;
  * Generate PDF from Nette Framework in one line.
  *
  * @author     Jan Kuchař
+ * @author     Tomáš Votruba
  * @copyright  Copyright (c) 2010 Jan Kuchař (http://mujserver.net)
  * @license    LGPL
  * @link       http://addons.nettephp.com/cs/pdfresponse
@@ -18,18 +26,22 @@ namespace PdfResponse;
 /**
  * @property-read mPDFExtended $mPDF
  */
-class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse {
-
+class PdfResponse extends Object implements IResponse
+{
     /**
      * path to mPDF.php
      * @var string
      */
-    public static $mPDFPath = "%libsDir%/PdfResponse/mPDF/mpdf.php";
+    public static $mPDFPath = "/PdfResponse/mPDF/mpdf.php";
+
+
     /**
      * Source data
      * @var mixed
      */
     private $source;
+
+
     /**
      * Callback - create mPDF object
      * @var Callback
@@ -42,10 +54,12 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse 
      */
     const ORIENTATION_PORTRAIT = "P";
 
+
     /**
      * Landscape page orientation
      */
     const ORIENTATION_LANDSCAPE = "L";
+
 
     /**
      * Specifies page orientation.
@@ -58,6 +72,8 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse 
      * @var string
      */
     public $pageOrientation = self::ORIENTATION_PORTRAIT;
+
+
     /**
      * Specifies format of the document<br>
      * <br>
@@ -83,6 +99,8 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse 
      * @var string
      */
     public $pageFormat = "A4";
+
+
     /**
      * Margins in this order:
      * <ol>
@@ -100,16 +118,22 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse 
      * @var string
      */
     public $pageMargins = "16,15,16,15,9,9";
+
+
     /**
      * Author of the document
      * @var string
      */
     public $documentAuthor = "Nette Framework - Pdf response";
+
+
     /**
      * Title of the document
      * @var string
      */
     public $documentTitle = "Unnamed document";
+
+
     /**
      * This parameter specifies the magnification (zoom) of the display when the document is opened.<br>
      * Values (case-<b>sensitive</b>)
@@ -124,6 +148,8 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse 
      * @var string|int
      */
     public $displayZoom = "default";
+
+
     /**
      * Specify the page layout to be used when the document is opened.<br>
      * Values (case-<b>sensitive</b>)
@@ -137,32 +163,43 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse 
      * @var string
      */
     public $displayLayout = "continuous";
+
+
     /**
      * Before document output starts
      * @var callback
      */
     public $onBeforeComplete = array();
+
+
     /**
      * Multi-language document?
      * @var bool
      */
     public $multiLanguage = false;
+
+
     /**
      * Additional stylesheet as a <b>string</b>
      * @var string
      */
     public $styles = "";
+
+
     /**
      * <b>Ignore</b> styles in HTML document
      * When using this feature, you MUST also install SimpleHTMLDom to your application!
      * @var bool
      */
     public $ignoreStylesInHTMLDocument = false;
+
+
     /**
      * mPDFExtended instance
      * @var mPDFExtended
      */
     private $mPDF = null;
+
 
     /**
      * @param  mixed  renderable variable
@@ -171,6 +208,7 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse 
         $this->createMPDF = callback($this, "createMPDF");
         $this->source = $source;
     }
+
 
     /**
      * Getts margins as <b>array</b>
@@ -203,6 +241,7 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse 
         return $marginsOut;
     }
 
+
     /**
      * Getts source document
      * @return mixed
@@ -211,11 +250,13 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse 
         return $this->source;
     }
 
+
     /**
      * Sends response to output.
      * @return void
      */
-    function send( \Nette\Http\IRequest $httpRequest, \Nette\Http\IResponse $httpResponse) {
+	public function send(\Nette\Http\IRequest $httpRequest, \Nette\Http\IResponse $httpResponse) {
+    // function send( \Nette\Http\IRequest $httpRequest, \Nette\Http\IResponse $httpResponse) {
         if ($this->source instanceof ITemplate) {
             $this->source->pdfResponse = $this;
             $this->source->mPDF = $this->getMPDF();
@@ -272,8 +313,11 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse 
 
         $this->onBeforeComplete($mpdf);
 
+
+		// $this->outputName = Strings::webalize($this->documentTitle).".pdf";
         $mpdf->Output(\Nette\Utils\Strings::webalize($this->documentTitle), 'I');
     }
+
 
     /**
      * Returns mPDF object
@@ -291,21 +335,20 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse 
                 throw new \Nette\InvalidStateException("Callback createMPDF is not callable or is not instance of Nette\Callback!");
         }
         return $this->mPDF;
+		die;
     }
+
 
     /**
      * Creates and returns mPDF object
      * @param PDFResponse $response
      * @return mPDFExtended
      */
-    public function createMPDF() {
-        /* if(!self::$mPDFPath) {
-          self::$mPDFPath = dirname(__FILE__)."/mpdf/mpdf.php";
-          } */
-        $mpdfPath = \Nette\Environment::expand(self::$mPDFPath);
+    public function createMPDF()
+	{
+        $mpdfPath = LIBS_DIR . self::$mPDFPath;
         define('_MPDF_PATH', dirname($mpdfPath) . "/");
         require($mpdfPath);
-
 
         //\Nette\Debug::barDump($mpdfPath);
 
@@ -313,20 +356,30 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse 
 
         //  [ float $margin_header , float $margin_footer [, string $orientation ]]]]]])
         $mpdf = new \mPDF(
-                        'utf-8', // string $codepage
-                        $this->pageFormat, // mixed $format
-                        '', // float $default_font_size
-                        '', // string $default_font
-                        $margins["left"], // float $margin_left
-                        $margins["right"], // float $margin_right
-                        $margins["top"], // float $margin_top
-                        $margins["bottom"], // float $margin_bottom
-                        $margins["header"], // float $margin_header
-                        $margins["footer"], // float $margin_footer
-                        $this->pageOrientation
+			'utf-8', // string $codepage
+			$this->pageFormat, // mixed $format
+			'', // float $default_font_size
+			'', // string $default_font
+			$margins["left"], // float $margin_left
+			$margins["right"], // float $margin_right
+			$margins["top"], // float $margin_top
+			$margins["bottom"], // float $margin_bottom
+			$margins["header"], // float $margin_header
+			$margins["footer"], // float $margin_footer
+			$this->pageOrientation
         );
 
         return $mpdf;
     }
+
+
+	/**
+	 * Test function
+	 */
+	public function test()
+	{
+		$this->source->render();
+		die;
+	}
 
 }

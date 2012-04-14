@@ -1,1 +1,0 @@
-To /mpdf please download last version of mpdf from: http://mpdf.bpm1.com/download
