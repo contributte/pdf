@@ -1,14 +1,13 @@
 PDF Response for Nette 2.0
 ===
 
-Sends template as PDF output.
-mPDF required!
-Works with Nette 2.0 (2.0.1 released on 2012-02-29).
-
+- sends template as PDF output
+- mPDF required!
+- works with Nette 2.0 (2.0.1 released on 2012-02-29)
+- without js support
 
 Default file locations
 ---
-
 
 	libs/PdfResponse/mPDF/
 	libs/PdfResponse/netterobots.txt
