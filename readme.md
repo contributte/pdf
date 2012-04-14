@@ -18,16 +18,16 @@ Default file locations
 Use
 ---
 
-		<?php
+	<?php
 
-		$template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
-		
-		$pdf = new PdfResponse($template);
-		$pdf->test(); // testing shortcut for: $this->template->render();die;
+	$template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
 
-		$this->sendResponse($pdf);
+	$pdf = new PdfResponse($template);
+	$pdf->test(); // shortcut for template render in browser: $this->template->render();die;
 
-		?>
+	$this->sendResponse($pdf);
+
+	?>
 
 More info
 ---
