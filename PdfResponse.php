@@ -294,7 +294,7 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse
 		}
 
 		if ($this->generatedPdf) { // singleton
-			return $generatedPdf;
+			return $this->generatedPdf;
 		}
 
 		if ($this->source instanceof ITemplate) {
@@ -352,8 +352,9 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse
 		}
 
 		$this->onBeforeComplete($mpdf);
+		$this->generatedFile = $mpdf;
 
-		return $mpdf;
+		return $this->generatedFile;
 	}
 
 
@@ -424,6 +425,9 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse
 
 	/**
 	 * Save file to target location
+	 * @param string
+	 * @param string
+	 * @return string
 	 */
 	public function save($location, $name = NULL)
 	{
@@ -442,7 +446,7 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse
 	 */
 	public function output()
 	{
-		return $this->presenter->sendResponse($this);
+		$this->presenter->sendResponse($this);
 	}
 
 }
