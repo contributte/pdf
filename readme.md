@@ -21,17 +21,19 @@ Use
 	<?php
 
 	$template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+	$template->someValue = 123;
+	// Tip: In template to make a new page use <pagebreak>
 
 	$pdf = new PdfResponse($template, $this->context);
 	$pdf->documentTitle = "costum file name 123";
 
 	// now you have 3 posibilites:
 
-	// 1. render template in browser, e.g. testing
+	// 1. render template in browser and terminate, e.g. testing
 	$pdf->test();
 
 	// 2. save file to server
-	$pdf->save(WWW_DIR . "/generated/"); // as a filename 'documentTitle' will be used
+	$pdf->save(WWW_DIR . "/generated/"); // as a filename $this->documentTitle will be used
 	$pdf->save(WWW_DIR . "/generated/", "another file 123); // OR use a costum name
 
 	// OR in case of mail attachment, returns path to file on server

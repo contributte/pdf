@@ -214,7 +214,7 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse
 	 * Generated pdf file
 	 * @var mPDF
 	 */
-	private $generatedPdf;
+	private $generatedFile;
 
 
 	/**
@@ -293,8 +293,8 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse
 			throw new \Exception("Var 'documentTitle' cannot be empty.");
 		}
 
-		if ($this->generatedPdf) { // singleton
-			return $this->generatedPdf;
+		if ($this->generatedFile) { // singleton
+			return $this->generatedFile;
 		}
 
 		if ($this->source instanceof ITemplate) {
