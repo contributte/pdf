@@ -3,16 +3,16 @@ PDF Response for Nette 2.0
 
 - sends template as PDF output
 - mPDF required!
-- works with Nette 2.0 (2.0.1 released on 2012-02-29)
+- works with Nette 2.1-dev (released on 2012-05-29)
 - without js support
 - nice api
 
 Default file locations
 ---
 
-	libs/PdfResponse/mPDF/
-	libs/PdfResponse/netterobots.txt
-	libs/PdfResponse/PdfResponse.php
+	libs/mPDF/
+	libs/netterobots.txt
+	libs/PdfResponse.php (anywhere)
 
 
 Use
@@ -24,8 +24,13 @@ Use
 	$template->someValue = 123;
 	// Tip: In template to make a new page use <pagebreak>
 
-	$pdf = new PdfResponse($template, $this->context);
+	$pdf = new \PdfResponse($template, $this->context);
 	$pdf->documentTitle = "costum file name 123";
+
+	// optional
+	$pdf->documentTitle = date("Y-m-d") . " My super title"; // creates filename 2012-06-30-my-super-title.pdf
+	$pdf->pageFormat = "A4-L"; // wide format
+	$pdf->getMPDF()->setFooter("|© www.mysite.com|"); // footer
 
 	// now you have 3 posibilites:
 

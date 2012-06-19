@@ -1,11 +1,8 @@
 <?php
 
-namespace PdfResponse;
-
 use Nette\Callback,
 	Nette\Utils\Strings,
-	Nette\Templating\Itemplate,
-	mPDF;
+	Nette\Templating\Itemplate;
 
 /**
  * PdfResponse
@@ -23,13 +20,13 @@ use Nette\Callback,
 /**
  * @property-read mPDFExtended $mPDF
  */
-class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse
+class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 {
 	/**
 	 * path to mPDF.php
 	 * @var string
 	 */
-	public static $mPDFPath = "/PdfResponse/mPDF/mpdf.php";
+	public static $mPDFPath = "/mPDF/mpdf.php";
 
 
 	/**
@@ -389,8 +386,6 @@ class PdfResponse extends \Nette\Object implements \Nette\Application\IResponse
 		$mpdfPath = LIBS_DIR . self::$mPDFPath;
 		define('_MPDF_PATH', dirname($mpdfPath) . "/");
 		require($mpdfPath);
-
-		//\Nette\Debug::barDump($mpdfPath);
 
 		$margins = $this->getMargins();
 
