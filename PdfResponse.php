@@ -1,8 +1,6 @@
 <?php
 
-use Nette\Callback,
-	Nette\Utils\Strings,
-	Nette\Templating\Itemplate;
+use Nette\Utils\Strings;
 
 /**
  * PdfResponse
@@ -13,6 +11,7 @@ use Nette\Callback,
  * @author	 Jan Kuchař
  * @author	 Tomáš Votruba
  * @copyright  Copyright (c) 2010 Jan Kuchař (http://mujserver.net)
+ * @version 2013, Nette 2.0.8 for PHP 5.3+ stable
  * @license	LGPL
  * @link	   http://addons.nettephp.com/cs/pdfresponse
  */
@@ -196,13 +195,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 
 
 	/**
-	 * \SystemContainer
-	 */
-	private $context;
-
-
-	/**
-	 * \Presenter
+	 * @var Nette\Appliaction\UI\Presenter
 	 */
 	private $presenter;
 
@@ -216,14 +209,13 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 
 	/**
 	 * @param mixed renderable variable
-	 * @param \SystemContainer
+	 * @param Nette\Appliaction\UI\Presenter
 	 */
-	public function __construct($source, \SystemContainer $context)
+	public function __construct($source, Nette\Application\UI\Presenter $presenter)
 	{
 		$this->createMPDF = callback($this, "createMPDF");
 		$this->source = $source;
-		$this->context = $context;
-		$this->presenter = $context->application->presenter;
+		$this->presenter = $presenter;
 	}
 
 
@@ -274,7 +266,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	 * Sends response to output
 	 * @return void
 	 */
-	public function send(\Nette\Http\IRequest $httpRequest, \Nette\Http\IResponse $httpResponse)
+	public function send(Nette\Http\IRequest $httpRequest, Nette\Http\IResponse $httpResponse)
 	{
 		$mpdf = $this->build();
 		$mpdf->Output(Strings::webalize($this->documentTitle), "I");
@@ -287,14 +279,14 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	private function build()
 	{
 		if (empty($this->documentTitle)) {
-			throw new \Exception("Var 'documentTitle' cannot be empty.");
+			throw new Exception("Var 'documentTitle' cannot be empty.");
 		}
 
 		if ($this->generatedFile) { // singleton
 			return $this->generatedFile;
 		}
 
-		if ($this->source instanceof ITemplate) {
+		if ($this->source instanceof Nette\Templating\Itemplate) {
 			$this->source->pdfResponse = $this;
 			$this->source->mPDF = $this->getMPDF();
 			$html = $this->source->__toString();
@@ -362,14 +354,14 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	public function getMPDF()
 	{
 		if (!$this->mPDF instanceof mPDF) {
-			if ($this->createMPDF instanceof \Nette\Callback and $this->createMPDF->isCallable()) {
+			if ($this->createMPDF instanceof Nette\Callback and $this->createMPDF->isCallable()) {
 				$mpdf = $this->createMPDF->invoke($this);
-				if (!($mpdf instanceof \mPDF)) {
-					throw new \Nette\InvalidStateException("Callback function createMPDF must return mPDF object!");
+				if (!($mpdf instanceof mPDF)) {
+					throw new Nette\InvalidStateException("Callback function createMPDF must return mPDF object!");
 				}
 				$this->mPDF = $mpdf;
 			}else
-				throw new \Nette\InvalidStateException("Callback createMPDF is not callable or is not instance of Nette\Callback!");
+				throw new Nette\InvalidStateException("Callback createMPDF is not callable or is not instance of Nette\Callback!");
 		}
 		return $this->mPDF;
 		die;
@@ -390,7 +382,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 		$margins = $this->getMargins();
 
 		//  [ float $margin_header , float $margin_footer [, string $orientation ]]]]]])
-		$mpdf = new \mPDF(
+		$mpdf = new mPDF(
 			'utf-8', // string $codepage
 			$this->pageFormat, // mixed $format
 			'', // float $default_font_size
