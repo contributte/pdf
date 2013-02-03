@@ -286,7 +286,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 			return $this->generatedFile;
 		}
 
-		if ($this->source instanceof Nette\Templating\Itemplate) {
+		if ($this->source instanceof Nette\Templating\ITemplate) {
 			$this->source->pdfResponse = $this;
 			$this->source->mPDF = $this->getMPDF();
 			$html = $this->source->__toString();
