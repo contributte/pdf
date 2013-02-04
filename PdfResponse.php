@@ -195,12 +195,6 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 
 
     /**
-     * @var Nette\Appliaction\UI\Presenter
-     */
-    private $presenter;
-
-
-    /**
      * Generated pdf file
      * @var mPDF
      */
@@ -209,13 +203,11 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 
     /**
      * @param mixed renderable variable
-     * @param Nette\Appliaction\UI\Presenter
      */
-    public function __construct($source, Nette\Application\UI\Presenter $presenter)
+    public function __construct($source)
     {
         $this->createMPDF = callback($this, "createMPDF");
         $this->source = $source;
-        $this->presenter = $presenter;
     }
 
 
@@ -401,16 +393,6 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 
 
     /**
-     * Test function simulates render and presenter termination
-     */
-    public function test()
-    {
-        $this->source->render();
-        $this->presenter->terminate();
-    }
-
-
-    /**
      * Save file to target location
      * @param string
      * @param string
@@ -425,15 +407,6 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
         file_put_contents($location . $name, $file);
 
         return $location . $name;
-    }
-
-
-    /**
-     * Output file to save
-     */
-    public function output()
-    {
-        $this->presenter->sendResponse($this);
     }
 
 }
