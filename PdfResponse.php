@@ -8,18 +8,19 @@ use Nette\Utils\Strings;
  * Wrapper of mPDF.
  * Generate PDF from Nette Framework in one line.
  *
- * @author     Jan Kuchař
- * @author     Tomáš Votruba
+ * @author	 Jan Kuchař
+ * @author	 Tomáš Votruba
  * @copyright  Copyright (c) 2010 Jan Kuchař (http://mujserver.net)
  * @version 2013, Nette 2.0.8 for PHP 5.3+ stable
- * @license    LGPL
- * @link       http://addons.nettephp.com/cs/pdfresponse
+ * @license	LGPL
+ * @link	   http://addons.nettephp.com/cs/pdfresponse
  */
 
 /**
  * @property-read mPDFExtended $mPDF
  */
-class PdfResponse extends Nette\Object implements Nette\Application\IResponse {
+class PdfResponse extends Nette\Object implements Nette\Application\IResponse
+{
     /**
      * path to mPDF.php
      * @var string
@@ -203,7 +204,8 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse {
     /**
      * @param mixed renderable variable
      */
-    public function __construct($source) {
+    public function __construct($source)
+    {
         $this->createMPDF = callback($this, "createMPDF");
         $this->source = $source;
     }
@@ -213,7 +215,8 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse {
      * Getts margins as array
      * @return array
      */
-    function getMargins() {
+    function getMargins()
+    {
         $margins = explode(",", $this->pageMargins);
         if (count($margins) !== 6) {
             throw new InvalidStateException("You must specify all margins! For example: 16,15,16,15,9,9");
@@ -230,7 +233,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse {
 
         $marginsOut = array();
         foreach ($margins AS $key => $val) {
-            $val = (int)$val;
+            $val = (int) $val;
             if ($val < 0) {
                 throw new InvalidArgumentException("Margin must not be negative number!");
             }
@@ -245,7 +248,8 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse {
      * Getts source document
      * @return mixed
      */
-    final public function getSource() {
+    final public function getSource()
+    {
         return $this->source;
     }
 
@@ -254,7 +258,8 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse {
      * Sends response to output
      * @return void
      */
-    public function send(Nette\Http\IRequest $httpRequest, Nette\Http\IResponse $httpResponse) {
+    public function send(Nette\Http\IRequest $httpRequest, Nette\Http\IResponse $httpResponse)
+    {
         $mpdf = $this->build();
         $mpdf->Output(Strings::webalize($this->documentTitle), "I");
     }
@@ -263,7 +268,8 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse {
     /**
      * Build final pdf
      */
-    private function build() {
+    private function build()
+    {
         if (empty($this->documentTitle)) {
             throw new Exception("Var 'documentTitle' cannot be empty.");
         }
@@ -337,7 +343,8 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse {
      * Returns mPDF object
      * @return mPDFExtended
      */
-    public function getMPDF() {
+    public function getMPDF()
+    {
         if (!$this->mPDF instanceof mPDF) {
             if ($this->createMPDF instanceof Nette\Callback and $this->createMPDF->isCallable()) {
                 $mpdf = $this->createMPDF->invoke($this);
@@ -345,7 +352,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse {
                     throw new Nette\InvalidStateException("Callback function createMPDF must return mPDF object!");
                 }
                 $this->mPDF = $mpdf;
-            } else
+            }else
                 throw new Nette\InvalidStateException("Callback createMPDF is not callable or is not instance of Nette\Callback!");
         }
         return $this->mPDF;
@@ -358,7 +365,8 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse {
      * @param PDFResponse $response
      * @return mPDFExtended
      */
-    public function createMPDF() {
+    public function createMPDF()
+    {
         $mpdfPath = LIBS_DIR . self::$mPDFPath;
         define('_MPDF_PATH', dirname($mpdfPath) . "/");
         require($mpdfPath);
@@ -390,15 +398,15 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse {
      * @param string
      * @return string
      */
-    public function save($location, $name = NULL) {
+    public function save($location, $name = NULL)
+    {
         $pdf = $this->build();
         $file = $pdf->output($name, "S");
-        $name = Strings::webalize($name ? : $this->documentTitle) . ".pdf";
+        $name = Strings::webalize($name ?: $this->documentTitle) . ".pdf";
 
         file_put_contents($location . $name, $file);
 
         return $location . $name;
     }
-
 
 }

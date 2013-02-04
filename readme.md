@@ -31,7 +31,7 @@ Use
 			$template->someValue = 123;
 			// Tip: In template to make a new page use <pagebreak>
 
-			$pdf = new \PdfResponse($template, $this->presenter);
+			$pdf = new \PdfResponse($template);
 			$pdf->documentTitle = "costum file name 123";
 
 			// optional
@@ -39,12 +39,9 @@ Use
 			$pdf->pageFormat = "A4-L"; // wide format
 			$pdf->getMPDF()->setFooter("|© www.mysite.com|"); // footer
 
-			// now you have 3 posibilites:
+			// now you have 2 posibilites:
 
-			// 1. render template in browser and terminate, e.g. testing
-			$pdf->test();
-
-			// 2. save file to server
+			// 1. save file to server
 			$pdf->save(WWW_DIR . "/generated/"); // as a filename $this->documentTitle will be used
 			$pdf->save(WWW_DIR . "/generated/", "another file 123); // OR use a custom name
 
@@ -55,8 +52,8 @@ Use
 			$mail->addAttachment($savedFile);
 			$mail->send();
 
-			// 3. send pdf file to output (save/open by user) and terminate
-			$pdf->output();
+			// 2. send pdf file to output (save/open by user) and terminate
+			$this->sendResponse($pdf);
 		}
 
 	}
