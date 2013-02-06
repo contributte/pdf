@@ -32,7 +32,6 @@ Use
 			// Tip: In template to make a new page use <pagebreak>
 
 			$pdf = new \PdfResponse($template);
-			$pdf->documentTitle = "costum file name 123";
 
 			// optional
 			$pdf->documentTitle = date("Y-m-d") . " My super title"; // creates filename 2012-06-30-my-super-title.pdf
