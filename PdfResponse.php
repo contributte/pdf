@@ -22,13 +22,6 @@ use Nette\Utils\Strings;
  */
 class PdfResponse extends Nette\Object implements Nette\Application\IResponse {
     /**
-     * path to mPDF.php
-     * @var string
-     */
-    public static $mPDFPath = "/mPDF/mpdf.php";
-
-
-    /**
      * Source data
      * @var mixed
      */
@@ -361,10 +354,6 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse {
      * @return mPDFExtended
      */
     public function createMPDF() {
-        $mpdfPath = LIBS_DIR . self::$mPDFPath;
-        define('_MPDF_PATH', dirname($mpdfPath) . "/");
-        require($mpdfPath);
-
         $margins = $this->getMargins();
 
         //  [ float $margin_header , float $margin_footer [, string $orientation ]]]]]])
@@ -402,36 +391,4 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse {
         return $location . $name;
     }
 
-}
-
-class MyPresenter extends Nette\Application\UI\Presenter {
-
-    public function actionPdf() {
-        $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
-        $template->someValue = 123;
-        // Tip: In template to make a new page use <pagebreak>
-
-        $pdf = new \PdfResponse($template);
-
-        // optional
-        $pdf->documentTitle = date("Y-m-d") . " My super title"; // creates filename 2012-06-30-my-super-title.pdf
-        $pdf->pageFormat = "A4-L"; // wide format
-        $pdf->getMPDF()->setFooter("|© www.mysite.com|"); // footer
-
-        // now you have 2 posibilites:
-
-        // 1. save file to server
-        $pdf->save(WWW_DIR . "/generated/"); // as a filename $this->documentTitle will be used
-        $pdf->save(WWW_DIR . "/generated/", "another file 123); // OR use a custom name
-
-        // OR in case of mail attachment, returns path to file on server
-        $savedFile = $pdf->save(WWW_DIR . "/contracts/");
-        $mail = new Nette\Mail\Message;
-        $mail->addTo("john@doe.com");
-        $mail->addAttachment($savedFile);
-        $mail->send();
-
-        // 2. send pdf file to output (save/open by user) and terminate
-        $this->sendResponse($pdf);
-    }
 }
