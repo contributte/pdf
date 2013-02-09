@@ -7,12 +7,23 @@ PDF Response for Nette 2.0
 - no js support
 - nice api
 
-Default file locations
+Install
 ---
+Recommended installation is via Composer.
+
+    {
+        "require":{
+            "castamir/pdf-response": "@dev"
+        }
+    }
+
+
+Alternative install without Composer:
 
 	libs/mPDF/
 	libs/netterobots.txt (prevents from caching all mPDF classes)
 	libs/PdfResponse.php (anywhere)
+
 
 
 Use
