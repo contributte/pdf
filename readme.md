@@ -26,16 +26,15 @@ Alternative install without Composer:
 
 
 
-Use
+How to create PDF from template
 ---
-
-	<?php
 
 	use PdfResponse;
 
 	class MyPresenter extends Nette\Application\UI\Presenter {
 
-        public function actionPdf() {
+        public function actionPdf()
+        {
             $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
             $template->someValue = 123;
             // Tip: In template to make a new page use <pagebreak>
@@ -46,26 +45,87 @@ Use
             $pdf->documentTitle = date("Y-m-d") . " My super title"; // creates filename 2012-06-30-my-super-title.pdf
             $pdf->pageFormat = "A4-L"; // wide format
             $pdf->getMPDF()->setFooter("|© www.mysite.com|"); // footer
+        }
+    }
 
-            // now you have 2 posibilites:
+Save file to server
+---
 
-            // 1. save file to server
+    public function actionPdf()
+        {
+            $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+
+            $pdf = new \PdfResponse($template);
+
             $pdf->save(WWW_DIR . "/generated/"); // as a filename $this->documentTitle will be used
             $pdf->save(WWW_DIR . "/generated/", "another file 123); // OR use a custom name
+        }
 
-            // OR in case of mail attachment, returns path to file on server
+
+Attach file to an email
+---
+
+    public function actionPdf()
+        {
+            $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+
+            $pdf = new \PdfResponse($template);
+
             $savedFile = $pdf->save(WWW_DIR . "/contracts/");
             $mail = new Nette\Mail\Message;
             $mail->addTo("john@doe.com");
             $mail->addAttachment($savedFile);
             $mail->send();
+        }
+    }
+    
 
-            // 2. send pdf file to output (save/open by user) and terminate
+Force file to download
+---
+
+    public function actionPdf()
+        {
+            $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+            
+            $pdf = new \PdfResponse($template);
+            
+            $pdf->setSaveMode(PdfResponse::DOWNLOAD); //default behavior
+            
             $this->sendResponse($pdf);
         }
     }
+    
 
-	?>
+Force file display in browser
+---
+
+    public function actionPdf()
+        {
+            $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+            
+            $pdf = new \PdfResponse($template);
+            
+            $pdf->setSaveMode(PdfResponse::INLINE);
+            
+            $this->sendResponse($pdf);
+        }
+    }
+    
+
+NEW: Set a pdf background easily
+---
+
+    public function actionPdf()
+        {
+            $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+            
+            $pdf = new \PdfResponse($template);
+
+            $pdf->setBackgroundTemplate(APP_DIR . "/templates/PDF_template.pdf");
+
+            $this->sendResponse($pdf);
+        }
+    }
 
 More info
 ---
