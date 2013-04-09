@@ -24,6 +24,12 @@ use Nette\Utils\Strings;
 class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 {
 
+	const MODE_INLINE = "I";
+	const MODE_DOWNLOAD = "D";
+
+	/** @var string save mode */
+	public $saveMode = self::MODE_DOWNLOAD;
+
 	/**
 	 * Source data
 	 *
@@ -265,7 +271,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	public function send(Nette\Http\IRequest $httpRequest, Nette\Http\IResponse $httpResponse)
 	{
 		$mpdf = $this->build();
-		$mpdf->Output(Strings::webalize($this->documentTitle), "I");
+		$mpdf->Output(Strings::webalize($this->documentTitle), $this->saveMode);
 	}
 
 	/**
@@ -409,6 +415,21 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 		file_put_contents($location . $name, $file);
 
 		return $location . $name;
+	}
+
+	/**
+	 * To force download, use PdfResponse::MODE_DOWNLOAD
+	 * To show pdf in browser, use PdfResponse::MODE_INLINE
+	 *
+	 * @param string $saveMode
+	 * @throws InvalidArgumentException
+	 */
+	public function setSaveMode($saveMode)
+	{
+		if (!in_array($saveMode, array(self::MODE_DOWNLOAD, self::MODE_INLINE))) {
+			throw new \InvalidArgumentException("Invalid mode");
+		}
+		$this->saveMode = $saveMode;
 	}
 
 }
