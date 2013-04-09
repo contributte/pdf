@@ -31,6 +31,9 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	 */
 	private $source;
 
+	/** @var string path to (PDF) file */
+	private $backgroundTemplate;
+
 	/**
 	 * Callback - create mPDF object
 	 *
@@ -199,6 +202,17 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	}
 
 	/**
+	 * @param string $backgroundTemplate
+	 */
+	public function setBackgroundTemplate($pathToBackgroundTemplate)
+	{
+		if (!file_exists($pathToBackgroundTemplate)) {
+			throw new \Nette\FileNotFoundException("File '$pathToBackgroundTemplate' not found.");
+		}
+		$this->backgroundTemplate = $pathToBackgroundTemplate;
+	}
+
+	/**
 	 * Getts margins as array
 	 *
 	 * @return array
@@ -265,6 +279,16 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 
 		if ($this->generatedFile) { // singleton
 			return $this->generatedFile;
+		}
+
+		if ($this->backgroundTemplate) {
+			// if background exists, then add it as a background
+			$mpdf = $this->getMPDF();
+			$mpdf->SetImportUse();
+			$mpdf->AddPage();
+			$pagecount = $mpdf->SetSourceFile($this->backgroundTemplate);
+			$tplId = $mpdf->ImportPage($pagecount);
+			$mpdf->UseTemplate($tplId);
 		}
 
 		if ($this->source instanceof Nette\Templating\ITemplate) {
