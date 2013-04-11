@@ -24,8 +24,8 @@ use Nette\Utils\Strings;
 class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 {
 
-	const MODE_INLINE = "I";
-	const MODE_DOWNLOAD = "D";
+	const INLINE = "I";
+	const DOWNLOAD = "D";
 
 	/** @var string save mode */
 	public $saveMode = self::MODE_DOWNLOAD;
@@ -426,7 +426,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	 */
 	public function setSaveMode($saveMode)
 	{
-		if (!in_array($saveMode, array(self::MODE_DOWNLOAD, self::MODE_INLINE))) {
+		if (!in_array($saveMode, array(self::DOWNLOAD, self::INLINE))) {
 			throw new \InvalidArgumentException("Invalid mode");
 		}
 		$this->saveMode = $saveMode;
