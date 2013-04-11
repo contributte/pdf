@@ -418,8 +418,8 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	}
 
 	/**
-	 * To force download, use PdfResponse::MODE_DOWNLOAD
-	 * To show pdf in browser, use PdfResponse::MODE_INLINE
+	 * To force download, use PdfResponse::DOWNLOAD
+	 * To show pdf in browser, use PdfResponse::INLINE
 	 *
 	 * @param string $saveMode
 	 * @throws InvalidArgumentException
