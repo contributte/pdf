@@ -28,7 +28,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	const DOWNLOAD = "D";
 
 	/** @var string save mode */
-	public $saveMode = self::MODE_DOWNLOAD;
+	public $saveMode = self::DOWNLOAD;
 
 	/**
 	 * Source data
