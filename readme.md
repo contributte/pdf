@@ -20,10 +20,13 @@ Recommended installation is via Composer.
 
 Alternative install without Composer:
 
-	libs/mPDF/
-	libs/netterobots.txt (prevents from caching all mPDF classes)
-	libs/PdfResponse.php (anywhere)
+	libs/mPDF/ (download and place mPDF library here)
+	libs/netterobots.txt (prevents robotloader from caching all mPDF classes)
+	libs/PdfResponse.php
+	
+and add the following line to the beggining of libs/PdfResponse.php:
 
+    require __DIR__ . "/mPDF/mpdf.php";
 
 
 How to create PDF from template
