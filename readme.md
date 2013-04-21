@@ -13,7 +13,7 @@ Recommended installation is via Composer.
 
     {
         "require":{
-            "castamir/pdf-response": "@dev"
+            "castamir/pdf-response": ">= 1.2"
         }
     }
 
@@ -29,7 +29,7 @@ and add the following line to the beggining of libs/PdfResponse.php:
     require __DIR__ . "/mPDF/mpdf.php";
 
 
-How to create PDF from template
+How to prepare PDF from template
 ---
 
 	use PdfResponse;
@@ -99,7 +99,7 @@ Force file to download
     }
     
 
-Force file display in browser
+Force file to display in a browser
 ---
 
     public function actionPdf()
@@ -115,7 +115,7 @@ Force file display in browser
     }
     
 
-NEW: Set a pdf background easily
+Set a pdf background easily
 ---
 
     public function actionPdf()
