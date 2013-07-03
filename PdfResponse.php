@@ -271,7 +271,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	public function send(Nette\Http\IRequest $httpRequest, Nette\Http\IResponse $httpResponse)
 	{
 		$mpdf = $this->build();
-		$mpdf->Output(Strings::webalize($this->documentTitle), $this->saveMode);
+		$mpdf->Output(Strings::webalize($this->documentTitle) . ".pdf", $this->saveMode);
 	}
 
 	/**
