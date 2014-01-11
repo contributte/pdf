@@ -1,9 +1,6 @@
 {
     "name": "castamir/pdf-response",
-    "description": "Personal fork of schmutzka/pdf-response - packagist enabled",
-    "require": {
-        "mpdf/mpdf": "v5.6.1"
-    },
+    "description": "Pdf response extension for Nette Framework",
     "authors": [
         {
             "name": "Jan Kuchař"
@@ -17,6 +14,14 @@
             "email": "tomas.vot@gmail.com"
         }
     ],
+    "require": {
+        "mpdf/mpdf": "~5.6.1"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.1-dev"
+        }
+    },
     "license": "LGPL-3.0",
     "autoload": {
         "classmap": ["PdfResponse.php"]
