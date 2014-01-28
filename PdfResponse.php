@@ -291,10 +291,15 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 			// if background exists, then add it as a background
 			$mpdf = $this->getMPDF();
 			$mpdf->SetImportUse();
-			$mpdf->AddPage();
 			$pagecount = $mpdf->SetSourceFile($this->backgroundTemplate);
-			$tplId = $mpdf->ImportPage($pagecount);
-			$mpdf->UseTemplate($tplId);
+			for ($i = 1; $i <= $pagecount; $i++) {
+				$tplId = $mpdf->ImportPage($i);
+				$mpdf->UseTemplate($tplId);
+                
+				if ($i < $pagecount)
+				  $mpdf->AddPage();
+			}
+			$mpdf->page=1;;
 		}
 
 		if ($this->source instanceof Nette\Templating\ITemplate) {
@@ -345,6 +350,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 			$mpdf->WriteHTML($this->styles, 1);
 		}
 
+		$mpdf->page=count($mpdf->pages); //set pointer to last page to force render of all pages
 		$this->onBeforeComplete($mpdf);
 		$this->generatedFile = $mpdf;
 
