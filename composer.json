@@ -31,5 +31,8 @@
     "suggest": {
         "nette/nette": "PHP framework to which this extension belongs to."
     },
-    "license": "LGPL-3.0"
+    "license": "LGPL-3.0",
+    "autoload": {
+        "classmap": ["Joseki"]
+    }
 }
