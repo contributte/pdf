@@ -1,9 +1,9 @@
-PDF Response for Nette 2.0
+PDF Response for Nette 2.1
 ===
 
 - sends template as PDF output
-- mPDF required - http://www.mpdf1.com/mpdf/download (version 5.6 tested)
-- works with Nette 2.0.8 (released on 2013-01-01)
+- mPDF required - http://www.mpdf1.com/mpdf/download (version 5.*)
+- works fine with both Nette 2.0.* and Nette 2.1.*
 - no js support
 - nice api
 
@@ -32,54 +32,50 @@ and add the following line to the beggining of libs/PdfResponse.php:
 How to prepare PDF from template
 ---
 
-	use PdfResponse;
+    // in a Presenter
+    public function actionPdf()
+    {
+        $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+        $template->someValue = 123;
+        // Tip: In template to make a new page use <pagebreak>
 
-	class MyPresenter extends Nette\Application\UI\Presenter {
+        $pdf = new \PdfResponse($template);
 
-        public function actionPdf()
-        {
-            $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
-            $template->someValue = 123;
-            // Tip: In template to make a new page use <pagebreak>
-
-            $pdf = new \PdfResponse($template);
-
-            // optional
-            $pdf->documentTitle = date("Y-m-d") . " My super title"; // creates filename 2012-06-30-my-super-title.pdf
-            $pdf->pageFormat = "A4-L"; // wide format
-            $pdf->getMPDF()->setFooter("|© www.mysite.com|"); // footer
-        }
+        // optional
+        $pdf->documentTitle = date("Y-m-d") . " My super title"; // creates filename 2012-06-30-my-super-title.pdf
+        $pdf->pageFormat = "A4-L"; // wide format
+        $pdf->getMPDF()->setFooter("|© www.mysite.com|"); // footer
     }
 
 Save file to server
 ---
 
     public function actionPdf()
-        {
-            $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+    {
+        $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
 
-            $pdf = new \PdfResponse($template);
+        $pdf = new \PdfResponse($template);
 
-            $pdf->save(WWW_DIR . "/generated/"); // as a filename $this->documentTitle will be used
-            $pdf->save(WWW_DIR . "/generated/", "another file 123); // OR use a custom name
-        }
+        $pdf->save(WWW_DIR . "/generated/"); // as a filename $this->documentTitle will be used
+        $pdf->save(WWW_DIR . "/generated/", "another file 123); // OR use a custom name
+    }
 
 
 Attach file to an email
 ---
 
     public function actionPdf()
-        {
-            $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+    {
+        $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
 
-            $pdf = new \PdfResponse($template);
+        $pdf = new \PdfResponse($template);
 
-            $savedFile = $pdf->save(WWW_DIR . "/contracts/");
-            $mail = new Nette\Mail\Message;
-            $mail->addTo("john@doe.com");
-            $mail->addAttachment($savedFile);
-            $mail->send();
-        }
+        $savedFile = $pdf->save(WWW_DIR . "/contracts/");
+        $mail = new Nette\Mail\Message;
+        $mail->addTo("john@doe.com");
+        $mail->addAttachment($savedFile);
+        $mailer = new SendmailMailer();
+        $mailer->send($mail);
     }
     
 
@@ -87,15 +83,12 @@ Force file to download
 ---
 
     public function actionPdf()
-        {
-            $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
-            
-            $pdf = new \PdfResponse($template);
-            
-            $pdf->setSaveMode(PdfResponse::DOWNLOAD); //default behavior
-            
-            $this->sendResponse($pdf);
-        }
+    {
+        $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+
+        $pdf = new \PdfResponse($template);
+        $pdf->setSaveMode(PdfResponse::DOWNLOAD); //default behavior
+        $this->sendResponse($pdf);
     }
     
 
@@ -103,15 +96,12 @@ Force file to display in a browser
 ---
 
     public function actionPdf()
-        {
-            $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
-            
-            $pdf = new \PdfResponse($template);
-            
-            $pdf->setSaveMode(PdfResponse::INLINE);
-            
-            $this->sendResponse($pdf);
-        }
+    {
+        $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+
+        $pdf = new \PdfResponse($template);
+        $pdf->setSaveMode(PdfResponse::INLINE);
+        $this->sendResponse($pdf);
     }
     
 
@@ -119,15 +109,12 @@ Set a pdf background easily
 ---
 
     public function actionPdf()
-        {
-            $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
-            
-            $pdf = new \PdfResponse($template);
+    {
+        $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
 
-            $pdf->setBackgroundTemplate(APP_DIR . "/templates/PDF_template.pdf");
-
-            $this->sendResponse($pdf);
-        }
+        $pdf = new \PdfResponse($template);
+        $pdf->setBackgroundTemplate(APP_DIR . "/templates/PDF_template.pdf");
+        $this->sendResponse($pdf);
     }
 
 More info
@@ -135,4 +122,5 @@ More info
 
 - http://forum.nette.org/cs/9037-zkusenosti-s-pouzitim-pdfresponse-v-nette-2-0b-a-php-5-3
 - http://forum.nette.org/cs/3726-addon-pdfresponse-pdfresponse
-- http://addons.nette.org/cs/pdfresponse
+- http://addons.nette.org/cs/pdfresponse (old version)
+- http://addons.nette.org/cs/pdfresponse2 (current version)
