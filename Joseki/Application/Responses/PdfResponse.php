@@ -2,6 +2,10 @@
 
 namespace Joseki\Application\Responses;
 
+use InvalidArgumentException;
+use Nette\FileNotFoundException;
+use Nette\Http\IRequest;
+use Nette\Http\IResponse;
 use Nette\InvalidStateException;
 use Nette\Utils\Strings;
 use Nette;
@@ -11,44 +15,32 @@ use mPDF;
  * PdfResponse
  * -----------
  * Wrapper of mPDF.
- * Generate PDF from Nette Framework in one line.
+ * Simple PDF generator for Nette Framework
  *
  * @author     Jan Kuchař
  * @author     Tomáš Votruba
  * @author     Miroslav Paulík
  * @copyright  Copyright (c) 2010 Jan Kuchař (http://mujserver.net)
- * @version    2013, Nette 2.0.8 for PHP 5.3+ stable
  * @license    LGPL
- * @link       http://addons.nettephp.com/cs/pdfresponse
+ * @link       http://addons.nette.org/cs/pdfresponse2
  */
 
-/**
- * @property-read mPDF $mPDF
- */
 class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 {
-
+	/** possible save modes */
 	const INLINE = "I";
 	const DOWNLOAD = "D";
 
 	/** @var string save mode */
 	public $saveMode = self::DOWNLOAD;
 
-	/**
-	 * Source data
-	 *
-	 * @var string|Nette\Templating\ITemplate
-	 */
+	/** @var  string|Nette\Templating\ITemplate */
 	private $source;
 
 	/** @var string path to (PDF) file */
 	private $backgroundTemplate;
 
-	/**
-	 * Callback - create mPDF object
-	 *
-	 * @var Callback
-	 */
+	/** @var \Nette\Callback|null */
 	public $createMPDF = NULL;
 
 	/**
@@ -116,18 +108,10 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	 */
 	public $pageMargins = "16,15,16,15,9,9";
 
-	/**
-	 * Author of the document
-	 *
-	 * @var string
-	 */
+	/** @var string */
 	public $documentAuthor = "Nette Framework - Pdf response";
 
-	/**
-	 * Title of the document
-	 *
-	 * @var string
-	 */
+	/** @var string */
 	public $documentTitle = "Unnamed document";
 
 	/**
@@ -159,18 +143,10 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	 */
 	public $displayLayout = "continuous";
 
-	/**
-	 * Before document output starts
-	 *
-	 * @var callback
-	 */
+	/** @var array onBeforeComplete event */
 	public $onBeforeComplete = array();
 
-	/**
-	 * Multi-language document?
-	 *
-	 * @var bool
-	 */
+	/** @var bool */
 	public $multiLanguage = FALSE;
 
 	/**
@@ -188,22 +164,14 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	 */
 	public $ignoreStylesInHTMLDocument = FALSE;
 
-	/**
-	 * mPDF instance
-	 *
-	 * @var mPDF
-	 */
+	/** @var mPDF */
 	private $mPDF = NULL;
 
-	/**
-	 * Generated pdf file
-	 *
-	 * @var mPDF
-	 */
+	/** @var  mPDF */
 	private $generatedFile;
 
 	/**
-	 * @param mixed renderable variable
+	 * @param string|Nette\Templating\ITemplate renderable source
 	 */
 	public function __construct($source)
 	{
@@ -212,12 +180,13 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	}
 
 	/**
-	 * @param string $backgroundTemplate
+	 * @param string $pathToBackgroundTemplate
+	 * @throws FileNotFoundException
 	 */
 	public function setBackgroundTemplate($pathToBackgroundTemplate)
 	{
 		if (!file_exists($pathToBackgroundTemplate)) {
-			throw new \Nette\FileNotFoundException("File '$pathToBackgroundTemplate' not found.");
+			throw new FileNotFoundException("File '$pathToBackgroundTemplate' not found.");
 		}
 		$this->backgroundTemplate = $pathToBackgroundTemplate;
 	}
@@ -268,23 +237,26 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	/**
 	 * Sends response to output
 	 *
-	 * @param Nette\Http\IRequest $httpRequest
-	 * @param Nette\Http\IResponse $httpResponse
+	 * @param IRequest $httpRequest
+	 * @param IResponse $httpResponse
 	 * @return void
 	 */
-	public function send(Nette\Http\IRequest $httpRequest, Nette\Http\IResponse $httpResponse)
+	public function send(IRequest $httpRequest, IResponse $httpResponse)
 	{
 		$mpdf = $this->build();
 		$mpdf->Output(Strings::webalize($this->documentTitle) . ".pdf", $this->saveMode);
 	}
 
 	/**
-	 * Build final pdf
+	 * Builds final pdf
+	 *
+	 * @return mPDF
+	 * @throws \Exception
 	 */
 	private function build()
 	{
 		if (empty($this->documentTitle)) {
-			throw new Exception("Var 'documentTitle' cannot be empty.");
+			throw new \Exception ("Var 'documentTitle' cannot be empty.");
 		}
 
 		if ($this->generatedFile) { // singleton
@@ -365,6 +337,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	/**
 	 * Returns mPDF object
 	 *
+	 * @throws InvalidStateException
 	 * @return mPDF
 	 */
 	public function getMPDF()
@@ -373,11 +346,11 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 			if ($this->createMPDF instanceof Nette\Callback and $this->createMPDF->isCallable()) {
 				$mpdf = $this->createMPDF->invoke($this);
 				if (!($mpdf instanceof mPDF)) {
-					throw new Nette\InvalidStateException("Callback function createMPDF must return mPDF object!");
+					throw new InvalidStateException("Callback function createMPDF must return mPDF object!");
 				}
 				$this->mPDF = $mpdf;
 			} else {
-				throw new Nette\InvalidStateException("Callback createMPDF is not callable or is not instance of Nette\\Callback!");
+				throw new InvalidStateException("Callback createMPDF is not callable or is not instance of Nette\\Callback!");
 			}
 		}
 
@@ -387,14 +360,12 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	/**
 	 * Creates and returns mPDF object
 	 *
-	 * @internal param \PdfResponse $response
 	 * @return mPDF
 	 */
 	public function createMPDF()
 	{
 		$margins = $this->getMargins();
 
-		//  [ float $margin_header , float $margin_footer [, string $orientation ]]]]]])
 		$mpdf = new mPDF('utf-8', // string $codepage
 			$this->pageFormat, // mixed $format
 			'', // float $default_font_size
@@ -412,20 +383,21 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 
 	/**
 	 * Save file to target location
+	 * Note: $name overrides property $documentTitle
 	 *
-	 * @param string
-	 * @param string
+	 * @param string $dir path to directory
+	 * @param string $filename
 	 * @return string
 	 */
-	public function save($location, $name = NULL)
+	public function save($dir, $filename = NULL)
 	{
 		$pdf = $this->build();
-		$file = $pdf->output($name, "S");
-		$name = Strings::webalize($name ? : $this->documentTitle) . ".pdf";
+		$file = $pdf->output($filename, "S");
+		$filename = Strings::webalize($filename ? : $this->documentTitle) . ".pdf";
 
-		file_put_contents($location . $name, $file);
+		file_put_contents($dir . $filename, $file);
 
-		return $location . $name;
+		return $dir . $filename;
 	}
 
 	/**
@@ -438,7 +410,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	public function setSaveMode($saveMode)
 	{
 		if (!in_array($saveMode, array(self::DOWNLOAD, self::INLINE))) {
-			throw new \InvalidArgumentException("Invalid mode");
+			throw new InvalidArgumentException("Invalid mode");
 		}
 		$this->saveMode = $saveMode;
 	}
