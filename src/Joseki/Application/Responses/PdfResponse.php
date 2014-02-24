@@ -189,6 +189,20 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 			throw new FileNotFoundException("File '$pathToBackgroundTemplate' not found.");
 		}
 		$this->backgroundTemplate = $pathToBackgroundTemplate;
+
+		// if background exists, then add it as a background
+		$mpdf = $this->getMPDF();
+		$mpdf->SetImportUse();
+		$pagecount = $mpdf->SetSourceFile($this->backgroundTemplate);
+		for ($i = 1; $i <= $pagecount; $i++) {
+			$tplId = $mpdf->ImportPage($i);
+			$mpdf->UseTemplate($tplId);
+
+			if ($i < $pagecount) {
+				$mpdf->AddPage();
+			}
+		}
+		$mpdf->page = 1;
 	}
 
 	/**
@@ -261,22 +275,6 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 
 		if ($this->generatedFile) { // singleton
 			return $this->generatedFile;
-		}
-
-		if ($this->backgroundTemplate) {
-			// if background exists, then add it as a background
-			$mpdf = $this->getMPDF();
-			$mpdf->SetImportUse();
-			$pagecount = $mpdf->SetSourceFile($this->backgroundTemplate);
-			for ($i = 1; $i <= $pagecount; $i++) {
-				$tplId = $mpdf->ImportPage($i);
-				$mpdf->UseTemplate($tplId);
-
-				if ($i < $pagecount) {
-					$mpdf->AddPage();
-				}
-			}
-			$mpdf->page = 1;;
 		}
 
 		if ($this->source instanceof Nette\Templating\ITemplate) {
