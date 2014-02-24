@@ -110,10 +110,19 @@ Set a pdf background easily
 
     public function actionPdf()
     {
-        $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+        $pdf = new \PdfResponse('');
+        $pdf->setBackgroundTemplate("/path/to/an/existing/file.pdf");
 
-        $pdf = new \PdfResponse($template);
-        $pdf->setBackgroundTemplate(APP_DIR . "/templates/PDF_template.pdf");
+        // to write into an existing document use the following statements
+        $mpdf = $pdf->getMPDF();
+        $mpdf->WriteFixedPosHTML('hello world', 1, 10, 10, 10);
+
+        // to write to another page
+        $mpdf->AddPage();
+
+        // to move to exact page, use
+        $mpdf->page = 3; // = move to 3rd page
+
         $this->sendResponse($pdf);
     }
 
