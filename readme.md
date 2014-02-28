@@ -13,7 +13,7 @@ Recommended installation is via Composer.
 
     {
         "require":{
-            "castamir/pdf-response": ">= 1.2"
+            "joseki/pdf-response": ">= 2.1"
         }
     }
 
@@ -131,5 +131,4 @@ More info
 
 - http://forum.nette.org/cs/9037-zkusenosti-s-pouzitim-pdfresponse-v-nette-2-0b-a-php-5-3
 - http://forum.nette.org/cs/3726-addon-pdfresponse-pdfresponse
-- http://addons.nette.org/cs/pdfresponse (old version)
-- http://addons.nette.org/cs/pdfresponse2 (current version)
+- http://nette.merxes.cz/addons/castamir/pdfresponse2

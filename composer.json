@@ -1,13 +1,13 @@
 {
-    "name": "castamir/pdf-response",
+    "name": "joseki/pdf-response",
     "description": "Pdf response extension for Nette Framework",
     "authors": [
         {
-            "name": "Jan Kuchař"
-        },
-        {
             "name": "Miroslav Paulík",
             "email": "miras.paulik@seznam.cz"
+        },
+        {
+            "name": "Jan Kuchař"
         },
         {
             "name": "Tomáš Votruba",
