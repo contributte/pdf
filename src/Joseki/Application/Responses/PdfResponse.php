@@ -318,7 +318,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 		}
 
 		// Add content
-		$mpdf->WriteHTML($html, $mode);
+		$mpdf->WriteHTML(iconv('UTF-8', 'UTF-8', $html), $mode);
 
 		// Add styles
 		if (!empty($this->styles)) {
