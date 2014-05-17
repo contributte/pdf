@@ -2,14 +2,16 @@
 
 namespace Joseki\Application\Responses;
 
-use InvalidArgumentException;
+use Nette\Bridges\ApplicationLatte\Template;
 use Nette\FileNotFoundException;
 use Nette\Http\IRequest;
 use Nette\Http\IResponse;
-use Nette\InvalidStateException;
+use Nette\Templating\ITemplate;
 use Nette\Utils\Strings;
 use Nette;
 use mPDF;
+
+
 
 /**
  * PdfResponse
@@ -24,123 +26,52 @@ use mPDF;
  * @license    LGPL
  * @link       http://addons.nette.org/cs/pdfresponse2
  */
-
 class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 {
 	/** possible save modes */
 	const INLINE = "I";
+
 	const DOWNLOAD = "D";
 
 	/** @var string save mode */
 	public $saveMode = self::DOWNLOAD;
 
-	/** @var  string|Nette\Templating\ITemplate */
+	/** @var  string|ITemplate|Template */
 	private $source;
 
 	/** @var string path to (PDF) file */
 	private $backgroundTemplate;
 
-	/** @var \Nette\Callback|null */
-	public $createMPDF = NULL;
-
-	/**
-	 * Portrait page orientation
-	 */
+	/**  Portrait page orientation */
 	const ORIENTATION_PORTRAIT = "P";
 
-	/**
-	 * Landscape page orientation
-	 */
+	/** Landscape page orientation */
 	const ORIENTATION_LANDSCAPE = "L";
 
-	/**
-	 * Specifies page orientation.
-	 * You can use constants:
-	 * <ul>
-	 *   <li>PdfResponse::ORIENTATION_PORTRAIT (default)
-	 *   <li>PdfResponse::ORIENTATION_LANDSCAPE
-	 * </ul>
-	 *
-	 * @var string
-	 */
+	/** @var string ORIENTATION_PORTRAIT or ORIENTATION_LANDSCAPE */
 	public $pageOrientation = self::ORIENTATION_PORTRAIT;
 
-	/**
-	 * Specifies format of the document<br>
-	 * <br>
-	 * Allowed values: (Values are case-<b>in</b>sensitive)
-	 * <ul>
-	 *   <li>A0 - A10
-	 *   <li>B0 - B10
-	 *   <li>C0 - C10
-	 *   <li>4A0
-	 *   <li>2A0
-	 *   <li>RA0 - RA4
-	 *   <li>SRA0 - SRA4
-	 *   <li>Letter
-	 *   <li>Legal
-	 *   <li>Executive
-	 *   <li>Folio
-	 *   <li>Demy
-	 *   <li>Royal
-	 *   <li>A<i> (Type A paperback 111x178mm)</i>
-	 *   <li>B<i> (Type B paperback 128x198mm)</i>
-	 * </ul>
-	 *
-	 * @var string
-	 */
+	/** see http://mpdf1.com/manual/index.php?tid=184 */
 	public $pageFormat = "A4";
 
 	/**
 	 * Margins in this order:
-	 * <ol>
-	 *   <li>top
-	 *   <li>right
-	 *   <li>bottom
-	 *   <li>left
-	 *   <li>header
-	 *   <li>footer
-	 * </ol>
-	 * Please use values <b>higer than 0</b>. In some PDF browser zero values may
-	 * cause problems!
+	 * top, right, bottom, left, header, footer
 	 *
-	 * @var string
+	 * Please use values higher than 0. In some PDF browser zero values may cause problems!
 	 */
 	public $pageMargins = "16,15,16,15,9,9";
 
-	/** @var string */
 	public $documentAuthor = "Nette Framework - Pdf response";
 
-	/** @var string */
-	public $documentTitle = "Unnamed document";
+	public $documentTitle = "New document";
 
 	/**
-	 * This parameter specifies the magnification (zoom) of the display when the document is opened.<br>
-	 * Values (case-<b>sensitive</b>)
-	 * <ul>
-	 *   <li><b>fullpage</b>: Fit a whole page in the screen
-	 *   <li><b>fullwidth</b>: Fit the width of the page in the screen
-	 *   <li><b>real</b>: Display at real size
-	 *   <li><b>default</b>: User's default setting in Adobe Reader
-	 *   <li><i>integer</i>: Display at a percentage zoom (e.g. 90 will display at 90% zoom)
-	 * </ul>
-	 *
-	 * @var string|int
+	 * Specify the initial Display Mode when the PDF file is opened in Adobe Reader
+	 * see http://mpdf1.com/manual/index.php?tid=128&searchstring=SetDisplayMode
 	 */
 	public $displayZoom = "default";
 
-	/**
-	 * Specify the page layout to be used when the document is opened.<br>
-	 * Values (case-<b>sensitive</b>)
-	 * <ul>
-	 *   <li><b>single</b>: Display one page at a time
-	 *   <li><b>continuous</b>: Display the pages in one column
-	 *   <li><b>two</b>: Display the pages in two columns
-	 *   <li><b>default</b>: User's default setting in Adobe Reader
-	 * </ul>
-	 *
-	 * @var string
-	 */
 	public $displayLayout = "continuous";
 
 	/** @var array onBeforeComplete event */
@@ -149,15 +80,11 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	/** @var bool */
 	public $multiLanguage = FALSE;
 
-	/**
-	 * Additional stylesheet as a <b>string</b>
-	 *
-	 * @var string
-	 */
+	/** Additional stylesheet as a html string */
 	public $styles = "";
 
 	/**
-	 * <b>Ignore</b> styles in HTML document
+	 * Ignore styles in HTML document
 	 * When using this feature, you MUST also install SimpleHTMLDom to your application!
 	 *
 	 * @var bool
@@ -170,14 +97,28 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	/** @var  mPDF */
 	private $generatedFile;
 
+
+
 	/**
-	 * @param string|Nette\Templating\ITemplate renderable source
+	 * @param Template|ITemplate|string $source
+	 * @throws InvalidArgumentException
+	 * @internal param
 	 */
 	public function __construct($source)
 	{
-		$this->createMPDF = callback($this, "createMPDF");
+		if (is_object($source)) {
+			if (!($source instanceof ITemplate || $source instanceof Template)) {
+				$class = get_class($source);
+				throw new InvalidArgumentException("Unsupported template class '$class'.");
+			}
+		} else if (!is_string($source)) {
+			$type = gettype($source);
+			throw new InvalidArgumentException("Invalid source type. Expected (html) string of instance of Nette\Templating\ITemplate, Nette\Bridges\ApplicationLatte\Template or Latte\Template, but '$type' given.");
+		}
 		$this->source = $source;
 	}
+
+
 
 	/**
 	 * @param string $pathToBackgroundTemplate
@@ -205,9 +146,13 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 		$mpdf->page = 1;
 	}
 
+
+
 	/**
 	 * Getts margins as array
 	 *
+	 * @throws InvalidStateException
+	 * @throws InvalidArgumentException
 	 * @return array
 	 */
 	function getMargins()
@@ -238,15 +183,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 		return $marginsOut;
 	}
 
-	/**
-	 * Getts source document
-	 *
-	 * @return string|Nette\Templating\ITemplate
-	 */
-	final public function getSource()
-	{
-		return $this->source;
-	}
+
 
 	/**
 	 * Sends response to output
@@ -261,6 +198,8 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 		$mpdf->Output(Strings::webalize($this->documentTitle) . ".pdf", $this->saveMode);
 	}
 
+
+
 	/**
 	 * Builds final pdf
 	 *
@@ -272,14 +211,15 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 		if (empty($this->documentTitle)) {
 			throw new \Exception ("Var 'documentTitle' cannot be empty.");
 		}
+		if ($this->ignoreStylesInHTMLDocument && !class_exists('simple_html_dom')) {
+			throw new MissingServiceException("Class 'simple_html_dom' not found. SimpleHTMLDom is propably missing.");
+		}
 
 		if ($this->generatedFile) { // singleton
 			return $this->generatedFile;
 		}
 
-		if ($this->source instanceof Nette\Templating\ITemplate) {
-			$this->source->pdfResponse = $this;
-			$this->source->mPDF = $this->getMPDF();
+		if ($this->source instanceof ITemplate || $this->source instanceof Template) {
 			$html = $this->source->__toString();
 		} else {
 			$html = $this->source;
@@ -287,7 +227,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 
 		// Fix: $html can't be empty (mPDF generates Fatal error)
 		if (empty($html)) {
-			$html = "<html><body></body></html>";
+			$html = '<html><body></body></html>';
 		}
 
 		$mpdf = $this->getMPDF();
@@ -297,14 +237,13 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 		$mpdf->SetDisplayMode($this->displayZoom, $this->displayLayout);
 		$mpdf->showImageErrors = TRUE;
 
+		// copied from mPDF -> removes comments
+		$html = preg_replace('/<!--mpdf/i', '', $html);
+		$html = preg_replace('/mpdf-->/i', '', $html);
+		$html = preg_replace('/<\!\-\-.*?\-\->/s', '', $html);
+
 		// @see: http://mpdf1.com/manual/index.php?tid=121&searchstring=writeHTML
 		if ($this->ignoreStylesInHTMLDocument) {
-
-			// copied from mPDF -> removes comments
-			$html = preg_replace('/<!--mpdf/i', '', $html);
-			$html = preg_replace('/mpdf-->/i', '', $html);
-			$html = preg_replace('/<\!\-\-.*?\-\->/s', '', $html);
-
 			// deletes all <style> tags
 			$parsedHtml = new simple_html_dom($html);
 			foreach ($parsedHtml->find("style") AS $el) {
@@ -332,6 +271,8 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 		return $this->generatedFile;
 	}
 
+
+
 	/**
 	 * Returns mPDF object
 	 *
@@ -341,19 +282,17 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	public function getMPDF()
 	{
 		if (!$this->mPDF instanceof mPDF) {
-			if ($this->createMPDF instanceof Nette\Callback and $this->createMPDF->isCallable()) {
-				$mpdf = $this->createMPDF->invoke($this);
-				if (!($mpdf instanceof mPDF)) {
-					throw new InvalidStateException("Callback function createMPDF must return mPDF object!");
-				}
-				$this->mPDF = $mpdf;
-			} else {
-				throw new InvalidStateException("Callback createMPDF is not callable or is not instance of Nette\\Callback!");
+			$mpdf = $this->createMPDF();
+			if (!($mpdf instanceof mPDF)) {
+				throw new InvalidStateException("Callback function createMPDF must return mPDF object!");
 			}
+			$this->mPDF = $mpdf;
 		}
 
 		return $this->mPDF;
 	}
+
+
 
 	/**
 	 * Creates and returns mPDF object
@@ -379,6 +318,8 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 		return $mpdf;
 	}
 
+
+
 	/**
 	 * Save file to target location
 	 * Note: $name overrides property $documentTitle
@@ -398,6 +339,8 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 		return $dir . $filename;
 	}
 
+
+
 	/**
 	 * To force download, use PdfResponse::DOWNLOAD
 	 * To show pdf in browser, use PdfResponse::INLINE
@@ -412,5 +355,29 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 		}
 		$this->saveMode = $saveMode;
 	}
+
+}
+
+
+
+
+class MissingServiceException extends \LogicException
+{
+
+}
+
+
+
+
+class InvalidStateException extends \LogicException
+{
+
+}
+
+
+
+
+class InvalidArgumentException extends \LogicException
+{
 
 }

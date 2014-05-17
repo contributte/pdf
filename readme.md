@@ -1,32 +1,21 @@
-PDF Response for Nette 2.1
+PDF Response for Nette 2
 ===
 
 - sends template as PDF output
 - mPDF required - http://www.mpdf1.com/mpdf/download (version 5.*)
-- works fine with both Nette 2.0.* and Nette 2.1.*
+- works fine with both Nette 2.0.* and Nette 2.1.* and even Nette 2.2.*
 - no js support
 - nice api
 
 Install
 ---
-Recommended installation is via Composer.
+Installation via Composer.
 
     {
         "require":{
-            "castamir/pdf-response": ">= 1.2"
+            "joseki/pdf-response": ">= 1.2"
         }
     }
-
-
-Alternative install without Composer:
-
-	libs/mPDF/ (download and place mPDF library here)
-	libs/netterobots.txt (prevents robotloader from caching all mPDF classes)
-	libs/PdfResponse.php
-	
-and add the following line to the beggining of libs/PdfResponse.php:
-
-    require __DIR__ . "/mPDF/mpdf.php";
 
 
 How to prepare PDF from template
@@ -35,11 +24,12 @@ How to prepare PDF from template
     // in a Presenter
     public function actionPdf()
     {
-        $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+        $template = $this->createTemplate();
+        $template->setFile("/path/to/template.latte");
         $template->someValue = 123;
         // Tip: In template to make a new page use <pagebreak>
 
-        $pdf = new \PdfResponse($template);
+        $pdf = new Joseki\Application\Responses\PdfResponse($template);
 
         // optional
         $pdf->documentTitle = date("Y-m-d") . " My super title"; // creates filename 2012-06-30-my-super-title.pdf
@@ -52,12 +42,13 @@ Save file to server
 
     public function actionPdf()
     {
-        $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+        $template = $this->createTemplate();
+        $template->setFile("/path/to/template.latte");
 
-        $pdf = new \PdfResponse($template);
+        $pdf = new Joseki\Application\Responses\PdfResponse($template);
 
-        $pdf->save(WWW_DIR . "/generated/"); // as a filename $this->documentTitle will be used
-        $pdf->save(WWW_DIR . "/generated/", "another file 123); // OR use a custom name
+        $pdf->save("/path/to/directory"); // as a filename $this->documentTitle will be used
+        $pdf->save("/path/to/directory", "filename"); // OR use a custom name
     }
 
 
@@ -66,11 +57,12 @@ Attach file to an email
 
     public function actionPdf()
     {
-        $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+        $template = $this->createTemplate();
+        $template->setFile("/path/to/template.latte");
 
-        $pdf = new \PdfResponse($template);
+        $pdf = new Joseki\Application\Responses\PdfResponse($template);
 
-        $savedFile = $pdf->save(WWW_DIR . "/contracts/");
+        $savedFile = $pdf->save("/path/to/directory");
         $mail = new Nette\Mail\Message;
         $mail->addTo("john@doe.com");
         $mail->addAttachment($savedFile);
@@ -84,9 +76,10 @@ Force file to download
 
     public function actionPdf()
     {
-        $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+        $template = $this->createTemplate();
+        $template->setFile("/path/to/template.latte");
 
-        $pdf = new \PdfResponse($template);
+        $pdf = new Joseki\Application\Responses\PdfResponse($template);
         $pdf->setSaveMode(PdfResponse::DOWNLOAD); //default behavior
         $this->sendResponse($pdf);
     }
@@ -97,9 +90,10 @@ Force file to display in a browser
 
     public function actionPdf()
     {
-        $template = $this->createTemplate()->setFile(APP_DIR . "/templates/myPdf.latte");
+        $template = $this->createTemplate();
+        $template->setFile("/path/to/template.latte");
 
-        $pdf = new \PdfResponse($template);
+        $pdf = new Joseki\Application\Responses\PdfResponse($template);
         $pdf->setSaveMode(PdfResponse::INLINE);
         $this->sendResponse($pdf);
     }
@@ -110,7 +104,7 @@ Set a pdf background easily
 
     public function actionPdf()
     {
-        $pdf = new \PdfResponse('');
+        $pdf = new Joseki\Application\Responses\PdfResponse('');
         $pdf->setBackgroundTemplate("/path/to/an/existing/file.pdf");
 
         // to write into an existing document use the following statements
@@ -123,6 +117,26 @@ Set a pdf background easily
         // to move to exact page, use
         $mpdf->page = 3; // = move to 3rd page
 
+        $this->sendResponse($pdf);
+    }
+
+
+Create pdf with latte only
+---
+
+    public function actionPdf()
+    {
+        $latte = new Latte\Engine;
+        $latte->setTempDirectory('/path/to/cache');
+        $latte->addFilter('money', function($val) { return ...; }); // formerly registerHelper()
+
+        $latte->onCompile[] = function($latte) {
+            $latte->addMacro(...); // when you want add some own macros, see http://goo.gl/d5A1u2
+        };
+
+        $template = $latte->renderToString("/path/to/template.latte");
+
+        $pdf = new Joseki\Application\Responses\PdfResponse($template);
         $this->sendResponse($pdf);
     }
 

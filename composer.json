@@ -17,12 +17,9 @@
     "require": {
         "mpdf/mpdf": "5.*"
     },
-    "require-dev": {
-        "nette/nette": "2.*"
-    },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.1-dev"
+            "dev-master": "2.2-dev"
         }
     },
     "suggest": {
