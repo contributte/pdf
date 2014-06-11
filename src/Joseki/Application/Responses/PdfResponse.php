@@ -342,6 +342,19 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 
 
 	/**
+	 * Return generated PDF as a string
+	 *
+	 * @return string
+	 */
+	public function __toString()
+	{
+		$pdf = $this->build();
+		return $pdf->Output("", "S");
+	}
+
+
+
+	/**
 	 * To force download, use PdfResponse::DOWNLOAD
 	 * To show pdf in browser, use PdfResponse::INLINE
 	 *
