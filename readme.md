@@ -2,7 +2,6 @@ PDF Response for Nette 2
 ===
 
 - sends template as PDF output
-- mPDF required - http://www.mpdf1.com/mpdf/download (version 5.*)
 - works fine with both Nette 2.0.* and Nette 2.1.* and even Nette 2.2.*
 - no js support
 - nice api
@@ -140,9 +139,8 @@ Create pdf with latte only
         $this->sendResponse($pdf);
     }
 
-More info
+See also
 ---
 
-- http://forum.nette.org/cs/9037-zkusenosti-s-pouzitim-pdfresponse-v-nette-2-0b-a-php-5-3
-- http://forum.nette.org/cs/3726-addon-pdfresponse-pdfresponse
-- http://nette.merxes.cz/addons/castamir/pdfresponse2
+- [Nette forum](http://forum.nette.org/cs/3726-addon-pdfresponse-pdfresponse) (czech)
+- [Nette Addons](http://addons.nette.org/joseki/pdf-response)

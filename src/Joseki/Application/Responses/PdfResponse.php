@@ -330,11 +330,10 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 	 */
 	public function save($dir, $filename = NULL)
 	{
-		$pdf = $this->build();
-		$file = $pdf->output($filename, "S");
+		$content = $this->__toString();
 		$filename = Strings::webalize($filename ? : $this->documentTitle) . ".pdf";
 
-		file_put_contents($dir . $filename, $file);
+		file_put_contents($dir . $filename, $content);
 
 		return $dir . $filename;
 	}
