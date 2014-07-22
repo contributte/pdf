@@ -20,6 +20,10 @@
     "require": {
         "mpdf/mpdf": "5.*"
     },
+    "require-dev": {
+        "nette/application": "~2.2",
+        "latte/latte": "~2.2"
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "2.2-dev"
