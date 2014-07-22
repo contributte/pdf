@@ -98,7 +98,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 
 
     /**
-     * @param Template|ITemplate|string $source
+     * @param ITemplate|Template|string $source
      * @throws InvalidArgumentException
      * @internal param
      */
@@ -111,7 +111,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
             }
         } else if (!is_string($source)) {
             $type = gettype($source);
-            throw new InvalidArgumentException("Invalid source type. Expected (html) string of instance of Nette\Templating\ITemplate, Nette\Bridges\ApplicationLatte\Template or Latte\Template, but '$type' given.");
+            throw new InvalidArgumentException("Invalid source type. Expected (html) string of instance of Nette\\Templating\\ITemplate, Nette\\Bridges\\ApplicationLatte\\Template or Latte\\Template, but '$type' given.");
         }
         $this->source = $source;
     }
@@ -365,20 +365,5 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
         }
         $this->saveMode = $saveMode;
     }
-
-}
-
-class MissingServiceException extends \LogicException
-{
-
-}
-
-class InvalidStateException extends \LogicException
-{
-
-}
-
-class InvalidArgumentException extends \LogicException
-{
 
 }

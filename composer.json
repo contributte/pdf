@@ -22,6 +22,7 @@
     },
     "require-dev": {
         "nette/application": "~2.2",
+        "nette/tester": "~1.0",
         "latte/latte": "~2.2"
     },
     "extra": {
