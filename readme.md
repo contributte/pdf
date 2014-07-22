@@ -1,6 +1,8 @@
 PDF Response for Nette 2
 ===
 
+[![Build Status](https://travis-ci.org/Joseki/PdfResponse.svg?branch=master)](https://travis-ci.org/Joseki/PdfResponse)
+
 - sends template as PDF output
 - works fine with both Nette 2.0.* and Nette 2.1.* and even Nette 2.2.*
 - no js support
