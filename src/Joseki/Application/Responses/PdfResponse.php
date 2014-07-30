@@ -23,6 +23,11 @@ use mPDF;
  * @copyright  Copyright (c) 2010 Jan Kuchař (http://mujserver.net)
  * @license    LGPL
  * @link       http://addons.nette.org/cs/pdfresponse2
+ *
+ * 
+ * @property string $pageOrientation
+ * @property string $pageFormat
+ * @property string $pageMargins
  */
 class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 {
@@ -47,10 +52,10 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
     const ORIENTATION_LANDSCAPE = "L";
 
     /** @var string ORIENTATION_PORTRAIT or ORIENTATION_LANDSCAPE */
-    public $pageOrientation = self::ORIENTATION_PORTRAIT;
+    private $pageOrientation = self::ORIENTATION_PORTRAIT;
 
     /** see http://mpdf1.com/manual/index.php?tid=184 */
-    public $pageFormat = "A4";
+    private $pageFormat = "A4";
 
     /**
      * Margins in this order:
@@ -58,7 +63,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
      *
      * Please use values higher than 0. In some PDF browser zero values may cause problems!
      */
-    public $pageMargins = "16,15,16,15,9,9";
+    private $pageMargins = "16,15,16,15,9,9";
 
     public $documentAuthor = "Nette Framework - Pdf response";
 
@@ -280,40 +285,24 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
     public function getMPDF()
     {
         if (!$this->mPDF instanceof mPDF) {
-            $mpdf = $this->createMPDF();
-            if (!($mpdf instanceof mPDF)) {
-                throw new InvalidStateException("Callback function createMPDF must return mPDF object!");
-            }
+            $margins = $this->getMargins();
+
+            $mpdf = new mPDF('utf-8', // string $codepage
+                $this->pageFormat, // mixed $format
+                '', // float $default_font_size
+                '', // string $default_font
+                $margins["left"], // float $margin_left
+                $margins["right"], // float $margin_right
+                $margins["top"], // float $margin_top
+                $margins["bottom"], // float $margin_bottom
+                $margins["header"], // float $margin_header
+                $margins["footer"], // float $margin_footer
+                $this->pageOrientation);
+
             $this->mPDF = $mpdf;
         }
 
         return $this->mPDF;
-    }
-
-
-
-    /**
-     * Creates and returns mPDF object
-     *
-     * @return mPDF
-     */
-    public function createMPDF()
-    {
-        $margins = $this->getMargins();
-
-        $mpdf = new mPDF('utf-8', // string $codepage
-            $this->pageFormat, // mixed $format
-            '', // float $default_font_size
-            '', // string $default_font
-            $margins["left"], // float $margin_left
-            $margins["right"], // float $margin_right
-            $margins["top"], // float $margin_top
-            $margins["bottom"], // float $margin_bottom
-            $margins["header"], // float $margin_header
-            $margins["footer"], // float $margin_footer
-            $this->pageOrientation);
-
-        return $mpdf;
     }
 
 
@@ -364,6 +353,82 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
             throw new InvalidArgumentException("Invalid mode");
         }
         $this->saveMode = $saveMode;
+    }
+
+
+
+    /**
+     * @return string
+     */
+    public function getPageOrientation()
+    {
+        return $this->pageOrientation;
+    }
+
+
+
+    /**
+     * @param string $pageOrientation
+     * @throws InvalidStateException
+     * @throws InvalidArgumentException
+     */
+    public function setPageOrientation($pageOrientation)
+    {
+        if ($this->mPDF) {
+            throw new InvalidStateException('mPDF instance already created. Set page orientation before calling getMPDF');
+        }
+        if (!in_array($pageOrientation, array(self::ORIENTATION_PORTRAIT, self::ORIENTATION_LANDSCAPE))) {
+            throw new InvalidArgumentException('Unknown page orientation');
+        }
+        $this->pageOrientation = $pageOrientation;
+    }
+
+
+
+    /**
+     * @return mixed
+     */
+    public function getPageFormat()
+    {
+        return $this->pageFormat;
+    }
+
+
+
+    /**
+     * @param mixed $pageFormat
+     * @throws InvalidStateException
+     */
+    public function setPageFormat($pageFormat)
+    {
+        if ($this->mPDF) {
+            throw new InvalidStateException('mPDF instance already created. Set page format before calling getMPDF');
+        }
+        $this->pageFormat = $pageFormat;
+    }
+
+
+
+    /**
+     * @return mixed
+     */
+    public function getPageMargins()
+    {
+        return $this->pageMargins;
+    }
+
+
+
+    /**
+     * @param mixed $pageMargins
+     * @throws InvalidStateException
+     */
+    public function setPageMargins($pageMargins)
+    {
+        if ($this->mPDF) {
+            throw new InvalidStateException('mPDF instance already created. Set page margins before calling getMPDF');
+        }
+        $this->pageMargins = $pageMargins;
     }
 
 }

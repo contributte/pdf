@@ -21,7 +21,7 @@ test(
         $actualData = ob_get_clean();
         $actualData = preg_replace('#/(CreationDate|ModDate|ID) .*#', '', $actualData);
 
-        $expectedData = file_get_contents(__DIR__ . '/templates/example1.pdf');
+        $expectedData = file_get_contents(__DIR__ . '/expected/full.pdf');
         $expectedData = preg_replace('#/(CreationDate|ModDate|ID) .*#', '', $expectedData);
 
         Assert::same($expectedData, $actualData);
