@@ -23,6 +23,8 @@
     "require-dev": {
         "nette/application": "~2.2",
         "nette/tester": "~1.0",
+        "symfony/dom-crawler": "~2.5",
+        "symfony/css-selector": "~2.5",
         "latte/latte": "~2.2"
     },
     "extra": {
@@ -31,6 +33,7 @@
         }
     },
     "suggest": {
+        "symfony/dom-crawler": "Allows filtering html tags.",
         "nette/nette": "PHP framework to which this extension belongs to."
     },
     "license": "LGPL-3.0",

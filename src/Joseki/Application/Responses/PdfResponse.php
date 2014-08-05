@@ -10,6 +10,7 @@ use Nette\Templating\ITemplate;
 use Nette\Utils\Strings;
 use Nette;
 use mPDF;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * PdfResponse
@@ -64,7 +65,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
     /** Additional stylesheet as a html string */
     public $styles = "";
 
-    /** @var bool, REQUIRES SimpleHTMLDom */
+    /** @var bool, REQUIRES symfony/dom-crawler package */
     public $ignoreStylesInHTMLDocument = false;
 
     /** @var  string|ITemplate|Template */
@@ -234,7 +235,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
     /**
      * WARNING: internally creates mPDF instance, setting some properties after calling this method
      * may cause an Exception
-     * 
+     *
      * @param string $pathToBackgroundTemplate
      * @throws FileNotFoundException
      */
@@ -327,8 +328,13 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
         if (empty($this->documentTitle)) {
             throw new \Exception ("Var 'documentTitle' cannot be empty.");
         }
-        if ($this->ignoreStylesInHTMLDocument && !class_exists('simple_html_dom')) {
-            throw new MissingServiceException("Class 'simple_html_dom' not found. SimpleHTMLDom is propably missing.");
+        if ($this->ignoreStylesInHTMLDocument) {
+            if (!class_exists('Symfony\Component\DomCrawler\Crawler')) {
+                throw new MissingServiceException("Class 'Symfony\\Component\\DomCrawler\\Crawler' not found. Try composer-require 'symfony/dom-crawler'.");
+            }
+            if (!class_exists('Symfony\Component\CssSelector\CssSelector')) {
+                throw new MissingServiceException("Class 'Symfony\\Component\\CssSelector\\CssSelector' not found. Try composer-require 'symfony/css-selector'.");
+            }
         }
 
         if ($this->generatedFile) { // singleton
@@ -366,11 +372,12 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
         // @see: http://mpdf1.com/manual/index.php?tid=121&searchstring=writeHTML
         if ($this->ignoreStylesInHTMLDocument) {
             // deletes all <style> tags
-            $parsedHtml = new simple_html_dom($html);
-            foreach ($parsedHtml->find("style") AS $el) {
-                $el->outertext = "";
+
+            $crawler = new Crawler($html);
+            foreach ($crawler->filter('style') as $child) {
+                $child->parentNode->removeChild($child);
             }
-            $html = $parsedHtml->__toString();
+            $html = $crawler->html();
 
             $mode = 2; // If <body> tags are found, all html outside these tags are discarded, and the rest is parsed as content for the document. If no <body> tags are found, all html is parsed as content. Prior to mPDF 4.2 the default CSS was not parsed when using mode #2
         } else {
