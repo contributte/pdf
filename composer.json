@@ -27,6 +27,9 @@
         "symfony/css-selector": "~2.5",
         "latte/latte": "~2.2"
     },
+    "conflict": {
+        "mpdf/mpdf": "v5.7.3"
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "2.2-dev"
