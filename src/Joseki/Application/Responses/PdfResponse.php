@@ -297,7 +297,6 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
     /**
      * @param ITemplate|Template|string $source
      * @throws InvalidArgumentException
-     * @internal param
      */
     public function __construct($source)
     {
