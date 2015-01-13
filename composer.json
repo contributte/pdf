@@ -28,7 +28,7 @@
         "latte/latte": "~2.2"
     },
     "conflict": {
-        "mpdf/mpdf": "v5.7.3"
+        "mpdf/mpdf": ">=5.7.3, <=5.7.99"
     },
     "extra": {
         "branch-alias": {
