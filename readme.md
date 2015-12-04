@@ -2,6 +2,8 @@ PDF Response for Nette 2
 ===
 
 [![Build Status](https://travis-ci.org/Joseki/PdfResponse.svg?branch=master)](https://travis-ci.org/Joseki/PdfResponse)
+[![Latest Stable Version](https://poser.pugx.org/joseki/pdf-response/v/stable)](https://packagist.org/packages/joseki/pdf-response)
+[![Total Downloads](https://poser.pugx.org/joseki/pdf-response/downloads)](https://packagist.org/packages/joseki/pdf-response)
 
 - sends template as PDF output
 - works fine with both Nette 2.0.* and Nette 2.1.* and even Nette 2.2.*
