@@ -5,10 +5,9 @@ PDF Response for Nette 2
 [![Latest Stable Version](https://poser.pugx.org/joseki/pdf-response/v/stable)](https://packagist.org/packages/joseki/pdf-response)
 [![Total Downloads](https://poser.pugx.org/joseki/pdf-response/downloads)](https://packagist.org/packages/joseki/pdf-response)
 
-- sends template as PDF output
-- works fine with both Nette 2.0.* and Nette 2.1.* and even Nette 2.2.*
-- no js support
-- nice api
+- sends template as PDF output using mPDF library
+- works with Nette v2.2+
+- requires PHP 5.4 or higher
 
 Install
 ---
