@@ -14,11 +14,9 @@
             "email": "tomas.vot@gmail.com"
         }
     ],
-    "replace": {
-        "castamir/pdf-response": "2.*"
-    },
     "require": {
-        "mpdf/mpdf": "5.*"
+        "php": ">=5.4",
+        "mpdf/mpdf": "^6.0"
     },
     "require-dev": {
         "nette/application": "~2.2",
@@ -27,12 +25,9 @@
         "symfony/css-selector": "~2.5",
         "latte/latte": "~2.2"
     },
-    "conflict": {
-        "mpdf/mpdf": ">=5.7.3, <=5.7.99"
-    },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         }
     },
     "suggest": {
