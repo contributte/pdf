@@ -2,14 +2,13 @@
 
 namespace Joseki\Application\Responses;
 
+use mPDF;
+use Nette;
 use Nette\Bridges\ApplicationLatte\Template;
 use Nette\FileNotFoundException;
 use Nette\Http\IRequest;
 use Nette\Http\IResponse;
-use Nette\Templating\ITemplate;
 use Nette\Utils\Strings;
-use Nette;
-use mPDF;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -30,6 +29,13 @@ use Symfony\Component\DomCrawler\Crawler;
  * @property string $pageOrientation
  * @property string $pageFormat
  * @property string $pageMargins
+ * @property string $documentAuthor
+ * @property string $documentTitle
+ * @property string|int $displayZoom
+ * @property string $displayLayout
+ * @property bool $multiLanguage
+ * @property bool $ignoreStylesInHTMLDocument
+ * @method onBeforeComplete($mpdf) @internal
  */
 class PdfResponse extends Nette\Object implements Nette\Application\IResponse
 {
@@ -44,20 +50,19 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
     /** Landscape page orientation */
     const ORIENTATION_LANDSCAPE = "L";
 
-    public $documentAuthor = "Nette Framework - Pdf response";
+    /** @see https://mpdf.github.io/reference/mpdf-functions/setdisplaymode.html */
+    const ZOOM_DEFAULT = "default"; // User’s default setting in Adobe Reader
+    const ZOOM_FULLPAGE = "fullpage"; // Fit a whole page in the screen
+    const ZOOM_FULLWIDTH = "fullwidth"; // Fit the width of the page in the screen
+    const ZOOM_REAL = "real"; // Display at real size
 
-    public $documentTitle = "New document";
-
-    public $displayZoom = "default";
-
-    /**
-     * Specify the initial Display Mode when the PDF file is opened in Adobe Reader
-     * see http://mpdf1.com/manual/index.php?tid=128&searchstring=SetDisplayMode
-     */
-    public $displayLayout = "continuous";
-
-    /** @var bool */
-    public $multiLanguage = false;
+    /** @see https://mpdf.github.io/reference/mpdf-functions/setdisplaymode.html */
+    const LAYOUT_SINGLE = "single"; // Display one page at a time
+    const LAYOUT_CONTINUOUS = "continuous"; // Display the pages in one column
+    const LAYOUT_TWO = "two"; // Display the pages in two columns (first page determined by document direction (e.g. RTL))
+    const LAYOUT_TWOLEFT = "twoleft"; // Display the pages in two columns, with the first page displayed on the left side (mPDF >= 5.2)
+    const LAYOUT_TWORIGHT = "tworight"; // Display the pages in two columns, with the first page displayed on the right side (mPDF >= 5.2)
+    const LAYOUT_DEFAULT = "default"; // User’s default setting in Adobe Reader
 
     /** @var array onBeforeComplete event */
     public $onBeforeComplete = array();
@@ -65,10 +70,25 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
     /** Additional stylesheet as a html string */
     public $styles = "";
 
-    /** @var bool, REQUIRES symfony/dom-crawler package */
-    public $ignoreStylesInHTMLDocument = false;
+    /** @var string */
+    private $documentAuthor = "Nette Framework - Pdf response";
 
-    /** @var  string|ITemplate|Template */
+    /** @var string */
+    private $documentTitle = "New document";
+
+    /** @var string|int */
+    private $displayZoom = self::ZOOM_DEFAULT;
+
+    /** @var string */
+    private $displayLayout = self::LAYOUT_DEFAULT;
+
+    /** @var bool */
+    private $multiLanguage = false;
+
+    /** @var bool, REQUIRES symfony/dom-crawler package */
+    private $ignoreStylesInHTMLDocument = false;
+
+    /** @var  string|Template */
     private $source;
 
     /** @var string save mode */
@@ -80,7 +100,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
     /** @var string ORIENTATION_PORTRAIT or ORIENTATION_LANDSCAPE */
     private $pageOrientation = self::ORIENTATION_PORTRAIT;
 
-    /** see http://mpdf1.com/manual/index.php?tid=184 */
+    /** @var string see second parameter ($format) at https://mpdf.github.io/reference/mpdf-functions/mpdf.html */
     private $pageFormat = "A4";
 
     /** @var string margins: top, right, bottom, left, header, footer */
@@ -92,8 +112,137 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
     /** @var  mPDF */
     private $generatedFile;
 
-
     /************************************ properties **************************************/
+
+    /**
+     * @return string
+     */
+    public function getDocumentAuthor()
+    {
+        return $this->documentAuthor;
+    }
+
+
+
+    /**
+     * @param string $documentAuthor
+     */
+    public function setDocumentAuthor($documentAuthor)
+    {
+        $this->documentAuthor = (string)$documentAuthor;
+    }
+
+
+
+    /**
+     * @return string
+     */
+    public function getDocumentTitle()
+    {
+        return $this->documentTitle;
+    }
+
+
+
+    /**
+     * @param string $documentTitle
+     */
+    public function setDocumentTitle($documentTitle)
+    {
+        $this->documentTitle = (string)$documentTitle;
+    }
+
+
+
+    /**
+     * @return string
+     */
+    public function getDisplayZoom()
+    {
+        return $this->displayZoom;
+    }
+
+
+
+    /**
+     * @param string $displayZoom
+     */
+    public function setDisplayZoom($displayZoom)
+    {
+        if (!in_array($displayZoom, array(self::ZOOM_DEFAULT, self::ZOOM_FULLPAGE, self::ZOOM_FULLWIDTH, self::ZOOM_REAL)) && $displayZoom <= 0) {
+            throw new InvalidArgumentException("Invalid zoom '$displayZoom', use PdfResponse::ZOOM_* constants or o positive integer.");
+        }
+        $this->displayZoom = $displayZoom;
+    }
+
+
+
+    /**
+     * @return mixed
+     */
+    public function getDisplayLayout()
+    {
+        return $this->displayLayout;
+    }
+
+
+
+    /**
+     * @param mixed $displayLayout
+     */
+    public function setDisplayLayout($displayLayout)
+    {
+        if (!in_array(
+                $displayLayout,
+                array(self::LAYOUT_DEFAULT, self::LAYOUT_CONTINUOUS, self::LAYOUT_SINGLE, self::LAYOUT_TWO, self::LAYOUT_TWOLEFT, self::LAYOUT_TWORIGHT)
+            ) && $displayLayout <= 0
+        ) {
+            throw new InvalidArgumentException("Invalid layout '$displayLayout', use PdfResponse::LAYOUT* constants.");
+        }
+        $this->displayLayout = (string)$displayLayout;
+    }
+
+
+
+    /**
+     * @return boolean
+     */
+    public function isMultiLanguage()
+    {
+        return $this->multiLanguage;
+    }
+
+
+
+    /**
+     * @param boolean $multiLanguage
+     */
+    public function setMultiLanguage($multiLanguage)
+    {
+        $this->multiLanguage = (bool)$multiLanguage;
+    }
+
+
+
+    /**
+     * @return boolean
+     */
+    public function isIgnoreStylesInHTMLDocument()
+    {
+        return $this->ignoreStylesInHTMLDocument;
+    }
+
+
+
+    /**
+     * @param boolean $ignoreStylesInHTMLDocument
+     */
+    public function setIgnoreStylesInHTMLDocument($ignoreStylesInHTMLDocument)
+    {
+        $this->ignoreStylesInHTMLDocument = (bool)$ignoreStylesInHTMLDocument;
+    }
+
+
 
     /**
      * @return string
@@ -272,7 +421,8 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
         if (!$this->mPDF instanceof mPDF) {
             $margins = $this->getMargins();
 
-            $mpdf = new mPDF('utf-8', // string $codepage
+            $mpdf = new mPDF(
+                'utf-8', // string $codepage
                 $this->pageFormat, // mixed $format
                 '', // float $default_font_size
                 '', // string $default_font
@@ -282,7 +432,8 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
                 $margins["bottom"], // float $margin_bottom
                 $margins["header"], // float $margin_header
                 $margins["footer"], // float $margin_footer
-                $this->pageOrientation);
+                $this->pageOrientation
+            );
 
             $this->mPDF = $mpdf;
         }
@@ -295,19 +446,18 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
     /*********************************** core **************************************/
 
     /**
-     * @param ITemplate|Template|string $source
+     * @param Template|string $source
      * @throws InvalidArgumentException
      */
     public function __construct($source)
     {
-        if (is_object($source)) {
-            if (!($source instanceof ITemplate || $source instanceof Template)) {
-                $class = get_class($source);
-                throw new InvalidArgumentException("Unsupported template class '$class'.");
-            }
-        } else if (!is_string($source)) {
-            $type = gettype($source);
-            throw new InvalidArgumentException("Invalid source type. Expected (html) string of instance of Nette\\Templating\\ITemplate, Nette\\Bridges\\ApplicationLatte\\Template or Latte\\Template, but '$type' given.");
+        if (!($source instanceof Template) && !is_string($source)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Invalid source type. Expected (html) string or instance of Nette\Bridges\ApplicationLatte\Template, but "%s" given.',
+                    is_object($source) ? get_class($source) : gettype($source)
+                )
+            );
         }
         $this->source = $source;
     }
@@ -329,10 +479,14 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
         }
         if ($this->ignoreStylesInHTMLDocument) {
             if (!class_exists('Symfony\Component\DomCrawler\Crawler')) {
-                throw new MissingServiceException("Class 'Symfony\\Component\\DomCrawler\\Crawler' not found. Try composer-require 'symfony/dom-crawler'.");
+                throw new MissingServiceException(
+                    "Class 'Symfony\\Component\\DomCrawler\\Crawler' not found. Try composer-require 'symfony/dom-crawler'."
+                );
             }
             if (!class_exists('Symfony\Component\CssSelector\CssSelector')) {
-                throw new MissingServiceException("Class 'Symfony\\Component\\CssSelector\\CssSelector' not found. Try composer-require 'symfony/css-selector'.");
+                throw new MissingServiceException(
+                    "Class 'Symfony\\Component\\CssSelector\\CssSelector' not found. Try composer-require 'symfony/css-selector'."
+                );
             }
         }
 
@@ -340,7 +494,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
             return $this->generatedFile;
         }
 
-        if ($this->source instanceof ITemplate || $this->source instanceof Template) {
+        if ($this->source instanceof Template) {
             $html = $this->source->__toString();
         } else {
             $html = $this->source;
@@ -368,7 +522,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
         $html = preg_replace('/mpdf-->/i', '', $html);
         $html = preg_replace('/<\!\-\-.*?\-\->/s', '', $html);
 
-        // @see: http://mpdf1.com/manual/index.php?tid=121&searchstring=writeHTML
+        // @see: https://mpdf.github.io/reference/mpdf-functions/writehtml.html
         if ($this->ignoreStylesInHTMLDocument) {
             // deletes all <style> tags
 
@@ -423,7 +577,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
     public function save($dir, $filename = null)
     {
         $content = $this->__toString();
-        $filename = Strings::webalize($filename ? : $this->documentTitle) . ".pdf";
+        $filename = Strings::webalize($filename ?: $this->documentTitle) . ".pdf";
 
         file_put_contents($dir . $filename, $content);
 
