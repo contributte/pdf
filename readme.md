@@ -13,13 +13,8 @@ Install
 ---
 Installation via Composer.
 
-
-```
-{
-    "require":{
-        "joseki/pdf-response": ">= 2.1"
-    }
-}
+```sh
+composer require joseki/pdf-response ">= 2.1"
 ```
 
 
@@ -31,16 +26,19 @@ How to prepare PDF from template
 public function actionPdf()
 {
     $template = $this->createTemplate();
-    $template->setFile("/path/to/template.latte");
+    $template->setFile(__DIR__ . "/path/to/template.latte");
     $template->someValue = 123;
     // Tip: In template to make a new page use <pagebreak>
 
-    $pdf = new Joseki\Application\Responses\PdfResponse($template);
+    $pdf = new \Joseki\Application\Responses\PdfResponse($template);
 
     // optional
     $pdf->documentTitle = date("Y-m-d") . " My super title"; // creates filename 2012-06-30-my-super-title.pdf
     $pdf->pageFormat = "A4-L"; // wide format
     $pdf->getMPDF()->setFooter("|© www.mysite.com|"); // footer
+    
+    // do something with $pdf
+    $this->sendResponse($pdf);
 }
 ```
 
@@ -51,12 +49,12 @@ Save file to server
 public function actionPdf()
 {
     $template = $this->createTemplate();
-    $template->setFile("/path/to/template.latte");
+    $template->setFile(__DIR__ . "/path/to/template.latte");
 
-    $pdf = new Joseki\Application\Responses\PdfResponse($template);
+    $pdf = new \Joseki\Application\Responses\PdfResponse($template);
 
-    $pdf->save("/path/to/directory"); // as a filename $this->documentTitle will be used
-    $pdf->save("/path/to/directory", "filename"); // OR use a custom name
+    $pdf->save(__DIR__ . "/path/to/directory"); // as a filename $this->documentTitle will be used
+    $pdf->save(__DIR__ . "/path/to/directory", "filename"); // OR use a custom name
 }
 ```
 
@@ -67,11 +65,11 @@ Attach file to an email
 public function actionPdf()
 {
     $template = $this->createTemplate();
-    $template->setFile("/path/to/template.latte");
+    $template->setFile(__DIR__ . "/path/to/template.latte");
 
-    $pdf = new Joseki\Application\Responses\PdfResponse($template);
+    $pdf = new \Joseki\Application\Responses\PdfResponse($template);
 
-    $savedFile = $pdf->save("/path/to/directory");
+    $savedFile = $pdf->save(__DIR__ . "/path/to/directory");
     $mail = new Nette\Mail\Message;
     $mail->addTo("john@doe.com");
     $mail->addAttachment($savedFile);
@@ -87,9 +85,9 @@ Force file to download
 public function actionPdf()
 {
     $template = $this->createTemplate();
-    $template->setFile("/path/to/template.latte");
+    $template->setFile(__DIR__ . "/path/to/template.latte");
 
-    $pdf = new Joseki\Application\Responses\PdfResponse($template);
+    $pdf = new \Joseki\Application\Responses\PdfResponse($template);
     $pdf->setSaveMode(PdfResponse::DOWNLOAD); //default behavior
     $this->sendResponse($pdf);
 }
@@ -102,9 +100,9 @@ Force file to display in a browser
 public function actionPdf()
 {
     $template = $this->createTemplate();
-    $template->setFile("/path/to/template.latte");
+    $template->setFile(__DIR__ . "/path/to/template.latte");
 
-    $pdf = new Joseki\Application\Responses\PdfResponse($template);
+    $pdf = new \Joseki\Application\Responses\PdfResponse($template);
     $pdf->setSaveMode(PdfResponse::INLINE);
     $this->sendResponse($pdf);
 }
@@ -117,7 +115,7 @@ Set a pdf background easily
 public function actionPdf()
 {
     $pdf = new Joseki\Application\Responses\PdfResponse('');
-    $pdf->setBackgroundTemplate("/path/to/an/existing/file.pdf");
+    $pdf->setBackgroundTemplate(__DIR__ . "/path/to/an/existing/file.pdf");
 
     // to write into an existing document use the following statements
     $mpdf = $pdf->getMPDF();
@@ -147,9 +145,9 @@ public function actionPdf()
         $latte->addMacro(...); // when you want add some own macros, see http://goo.gl/d5A1u2
     };
 
-    $template = $latte->renderToString("/path/to/template.latte");
+    $template = $latte->renderToString(__DIR__ . "/path/to/template.latte");
 
-    $pdf = new Joseki\Application\Responses\PdfResponse($template);
+    $pdf = new \Joseki\Application\Responses\PdfResponse($template);
     $this->sendResponse($pdf);
 }
 ```
