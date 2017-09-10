@@ -577,8 +577,15 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
     public function save($dir, $filename = null)
     {
         $content = $this->__toString();
-        $filename = Strings::webalize($filename ?: $this->documentTitle) . ".pdf";
+        $filename = Strings::lower($filename ?: $this->documentTitle);
 
+        if (Strings::endsWith($filename, ".pdf")) {
+            $filename = substr($filename, 0,-4);
+        }
+
+        $filename = Strings::webalize($filename, "_") . ".pdf";
+
+        $dir = rtrim($dir, "/") . "/";
         file_put_contents($dir . $filename, $content);
 
         return $dir . $filename;
