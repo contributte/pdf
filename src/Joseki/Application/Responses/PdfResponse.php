@@ -434,6 +434,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
                 $margins["footer"], // float $margin_footer
                 $this->pageOrientation
             );
+            $mpdf->showImageErrors = true;
 
             $this->mPDF = $mpdf;
         }
@@ -510,7 +511,6 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
         $mpdf->SetAuthor($this->documentAuthor);
         $mpdf->SetTitle($this->documentTitle);
         $mpdf->SetDisplayMode($this->displayZoom, $this->displayLayout);
-        $mpdf->showImageErrors = true;
 
         // Add styles
         if (!empty($this->styles)) {
