@@ -16,7 +16,7 @@
     ],
     "require": {
         "php": ">=5.4 || ~7.0.0 || ~7.1.0",
-        "mpdf/mpdf": "7.*"
+        "mpdf/mpdf": "7.0"
     },
     "require-dev": {
         "nette/application": "~2.2",
