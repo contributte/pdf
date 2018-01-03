@@ -20,6 +20,7 @@ use Symfony\Component\DomCrawler\Crawler;
  * @author     Jan Kuchař
  * @author     Tomáš Votruba
  * @author     Miroslav Paulík
+ * @author     Štěpán Škorpil
  * @copyright  Copyright (c) 2010 Jan Kuchař (http://mujserver.net)
  * @license    LGPL
  * @link       http://addons.nette.org/cs/pdfresponse2
@@ -37,8 +38,10 @@ use Symfony\Component\DomCrawler\Crawler;
  * @property bool $ignoreStylesInHTMLDocument
  * @method onBeforeComplete($mpdf) @internal
  */
-class PdfResponse extends Nette\Object implements Nette\Application\IResponse
+class PdfResponse implements Nette\Application\IResponse
 {
+    use Nette\SmartObject;
+
     /** possible save modes */
     const INLINE = "I";
 
@@ -417,7 +420,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
     {
         $margins = $this->getMargins();
         return [
-            'mode' => '',
+            'mode' => 'utf-8',
             'format' => $this->pageFormat,
             'margin_left' => $margins["left"],
             'margin_right' => $margins["right"],
