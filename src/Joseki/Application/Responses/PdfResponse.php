@@ -2,7 +2,7 @@
 
 namespace Joseki\Application\Responses;
 
-use mPDF;
+use Mpdf\Mpdf;
 use Nette;
 use Nette\Bridges\ApplicationLatte\Template;
 use Nette\FileNotFoundException;
@@ -106,7 +106,7 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
     /** @var string margins: top, right, bottom, left, header, footer */
     private $pageMargins = "16,15,16,15,9,9";
 
-    /** @var mPDF */
+    /** @var Mpdf */
     private $mPDF = null;
 
     /** @var  mPDF */
@@ -410,30 +410,35 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
         $mpdf->page = 1;
     }
 
-
+    /**
+     * @return array
+     */
+    protected function getMPDFConfig()
+    {
+        $margins = $this->getMargins();
+        return [
+            'mode' => '',
+            'format' => $this->pageFormat,
+            'margin_left' => $margins["left"],
+            'margin_right' => $margins["right"],
+            'margin_top' => $margins["top"],
+            'margin_bottom' => $margins["bottom"],
+            'margin_header' => $margins["header"],
+            'margin_footer' => $margins["footer"],
+            'orientation' => $this->pageOrientation
+        ];
+    }
 
     /**
      * @throws InvalidStateException
-     * @return mPDF
+     * @return Mpdf
      */
     public function getMPDF()
     {
-        if (!$this->mPDF instanceof mPDF) {
-            $margins = $this->getMargins();
+        if (!$this->mPDF instanceof Mpdf) {
 
-            $mpdf = new mPDF(
-                'utf-8', // string $codepage
-                $this->pageFormat, // mixed $format
-                '', // float $default_font_size
-                '', // string $default_font
-                $margins["left"], // float $margin_left
-                $margins["right"], // float $margin_right
-                $margins["top"], // float $margin_top
-                $margins["bottom"], // float $margin_bottom
-                $margins["header"], // float $margin_header
-                $margins["footer"], // float $margin_footer
-                $this->pageOrientation
-            );
+            $mpdf = new Mpdf($this->getMPDFConfig());
+
             $mpdf->showImageErrors = true;
 
             $this->mPDF = $mpdf;
@@ -605,3 +610,4 @@ class PdfResponse extends Nette\Object implements Nette\Application\IResponse
     }
 
 }
+
