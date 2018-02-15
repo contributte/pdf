@@ -67,6 +67,9 @@ class PdfResponse implements Nette\Application\IResponse
     const LAYOUT_TWORIGHT = "tworight"; // Display the pages in two columns, with the first page displayed on the right side (mPDF >= 5.2)
     const LAYOUT_DEFAULT = "default"; // User’s default setting in Adobe Reader
 
+    /** @var array */
+	public $mpdfConfig = array();
+
     /** @var array onBeforeComplete event */
     public $onBeforeComplete = array();
 
@@ -116,6 +119,24 @@ class PdfResponse implements Nette\Application\IResponse
     private $generatedFile;
 
     /************************************ properties **************************************/
+
+    /**
+     * @param Template|string $source
+     * @throws InvalidArgumentException
+     */
+    public function setTemplate($source)
+    {
+        if (!($source instanceof Template) && !is_string($source)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Invalid source type. Expected (html) string or instance of Nette\Bridges\ApplicationLatte\Template, but "%s" given.',
+                    is_object($source) ? get_class($source) : gettype($source)
+                )
+            );
+        }
+        $this->source = $source;
+        return $this;
+    }
 
     /**
      * @return string
@@ -421,7 +442,7 @@ class PdfResponse implements Nette\Application\IResponse
     protected function getMPDFConfig()
     {
         $margins = $this->getMargins();
-        return [
+        return $this->mpdfConfig + [
             'mode' => 'utf-8',
             'format' => $this->pageFormat,
             'margin_left' => $margins["left"],
@@ -462,17 +483,11 @@ class PdfResponse implements Nette\Application\IResponse
      * @param Template|string $source
      * @throws InvalidArgumentException
      */
-    public function __construct($source)
+    public function __construct($source = NULL)
     {
-        if (!($source instanceof Template) && !is_string($source)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Invalid source type. Expected (html) string or instance of Nette\Bridges\ApplicationLatte\Template, but "%s" given.',
-                    is_object($source) ? get_class($source) : gettype($source)
-                )
-            );
+        if ($source !== NULL) {
+            $this->setTemplate($source);
         }
-        $this->source = $source;
     }
 
 
