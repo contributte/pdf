@@ -109,6 +109,9 @@ class PdfResponse implements Nette\Application\IResponse
     /** @var string margins: top, right, bottom, left, header, footer */
     private $pageMargins = "16,15,16,15,9,9";
 
+    /** @var array aditional settings for the mPDF constuctor */
+    private $additionalConfig = [];
+
     /** @var Mpdf */
     private $mPDF = null;
 
@@ -414,6 +417,21 @@ class PdfResponse implements Nette\Application\IResponse
     }
 
 
+	/**
+	 * @param $additionalConfig Array of settings fot the mPDF constructor, see {@link https://mpdf.github.io/configuration/configuration-v7-x.html}
+	 */
+	public function setMPDFAdditionalConfig($additionalConfig)
+	{
+		if ($this->mPDF) {
+			throw new InvalidStateException('mPDF instance already created. Set additional config before calling getMPDF');
+		}
+		if (!is_array($additionalConfig)) {
+			throw new InvalidArgumentException('Additional config must be an array of settings');
+		}
+		$this->additionalConfig = $additionalConfig;
+	}
+
+
 
     /**
      * @return array
@@ -421,7 +439,7 @@ class PdfResponse implements Nette\Application\IResponse
     protected function getMPDFConfig()
     {
         $margins = $this->getMargins();
-        return [
+        return array_merge([
             'mode' => 'utf-8',
             'format' => $this->pageFormat,
             'margin_left' => $margins["left"],
@@ -431,7 +449,7 @@ class PdfResponse implements Nette\Application\IResponse
             'margin_header' => $margins["header"],
             'margin_footer' => $margins["footer"],
             'orientation' => $this->pageOrientation
-        ];
+        ], $this->additionalConfig);
     }
 
 
