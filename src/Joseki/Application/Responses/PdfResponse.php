@@ -109,8 +109,8 @@ class PdfResponse implements Nette\Application\IResponse
     /** @var string margins: top, right, bottom, left, header, footer */
     private $pageMargins = "16,15,16,15,9,9";
 
-    /** @var array aditional settings for the mPDF constuctor */
-    private $additionalConfig = [];
+    /** @var array Additional settings for the mPDF constructor */
+    private $additionalConfig = array();
 
     /** @var Mpdf */
     private $mPDF = null;
