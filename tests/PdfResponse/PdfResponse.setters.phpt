@@ -21,7 +21,7 @@ test(
             function () use ($fileResponse) {
                 $fileResponse->displayZoom = "invalid";
             },
-            'Joseki\Application\Responses\InvalidArgumentException'
+            InvalidArgumentException::class
         );
 
         // layout
@@ -30,7 +30,7 @@ test(
             function () use ($fileResponse) {
                 $fileResponse->displayLayout = "invalid";
             },
-            'Joseki\Application\Responses\InvalidArgumentException'
+            InvalidArgumentException::class
         );
     }
 );

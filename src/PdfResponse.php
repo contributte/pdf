@@ -14,6 +14,7 @@ use Nette\Http\IResponse;
 use Nette\Utils\Strings;
 use setasign\Fpdi\PdfParser\PdfParserException as PdfParserExceptionAlias;
 use Symfony\Component\DomCrawler\Crawler;
+use Throwable;
 
 /**
  * PdfResponse
@@ -158,18 +159,18 @@ class PdfResponse implements Nette\Application\IResponse
 
 
     /**
-     * @return string
+     * @return string|int
      */
-    public function getDisplayZoom(): string
+    public function getDisplayZoom()
     {
         return $this->displayZoom;
     }
 
 
     /**
-     * @param string $displayZoom
+     * @param string|int $displayZoom
      */
-    public function setDisplayZoom(string $displayZoom): void
+    public function setDisplayZoom($displayZoom): void
     {
         if (!in_array($displayZoom, array(
                 self::ZOOM_DEFAULT,
@@ -511,7 +512,7 @@ class PdfResponse implements Nette\Application\IResponse
             try {
                 /** @noinspection PhpMethodParametersCountMismatchInspection */
                 $html = $this->source->__toString(true);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 throw new InvalidStateException("Template rendering failed", 0, $e);
             }
         } else {
