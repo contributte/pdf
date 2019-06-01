@@ -5,6 +5,7 @@
  */
 
 use Joseki\Application\Responses\PdfResponse;
+use Joseki\Application\Responses\InvalidArgumentException;
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
