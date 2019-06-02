@@ -6,6 +6,7 @@
  */
 
 use Joseki\Application\Responses\PdfResponse;
+use Joseki\Application\Responses\InvalidStateException;
 use Nette\Http;
 use Tester\Assert;
 
@@ -41,7 +42,7 @@ test(
             function () use ($fileResponse) {
                 $fileResponse->pageOrientation = PdfResponse::ORIENTATION_LANDSCAPE;
             },
-            'Joseki\Application\Responses\InvalidStateException',
+            InvalidStateException::class,
             'mPDF instance already created. Set page orientation before calling getMPDF'
         );
     }
@@ -56,7 +57,7 @@ test(
             function () use ($fileResponse) {
                 $fileResponse->pageFormat = 'A4-L';
             },
-            'Joseki\Application\Responses\InvalidStateException',
+            InvalidStateException::class,
             'mPDF instance already created. Set page format before calling getMPDF'
         );
     }
@@ -71,7 +72,7 @@ test(
             function () use ($fileResponse) {
                 $fileResponse->pageMargins = $fileResponse->getPageMargins();
             },
-            'Joseki\Application\Responses\InvalidStateException',
+            InvalidStateException::class,
             'mPDF instance already created. Set page margins before calling getMPDF'
         );
     }
