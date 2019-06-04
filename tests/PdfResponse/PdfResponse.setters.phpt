@@ -5,6 +5,7 @@
  */
 
 use Joseki\Application\Responses\PdfResponse;
+use Joseki\Application\Responses\InvalidArgumentException;
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
@@ -21,7 +22,7 @@ test(
             function () use ($fileResponse) {
                 $fileResponse->displayZoom = "invalid";
             },
-            'Joseki\Application\Responses\InvalidArgumentException'
+            InvalidArgumentException::class
         );
 
         // layout
@@ -30,7 +31,7 @@ test(
             function () use ($fileResponse) {
                 $fileResponse->displayLayout = "invalid";
             },
-            'Joseki\Application\Responses\InvalidArgumentException'
+            InvalidArgumentException::class
         );
     }
 );

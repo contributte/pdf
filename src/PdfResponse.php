@@ -2,14 +2,19 @@
 
 namespace Joseki\Application\Responses;
 
+use Mpdf\HTMLParserMode;
 use Mpdf\Mpdf;
+use Mpdf\MpdfException;
+use Mpdf\Output\Destination;
 use Nette;
 use Nette\Bridges\ApplicationLatte\Template;
 use Nette\FileNotFoundException;
 use Nette\Http\IRequest;
 use Nette\Http\IResponse;
 use Nette\Utils\Strings;
+use setasign\Fpdi\PdfParser\PdfParserException as PdfParserExceptionAlias;
 use Symfony\Component\DomCrawler\Crawler;
+use Throwable;
 
 /**
  * PdfResponse
@@ -109,56 +114,52 @@ class PdfResponse implements Nette\Application\IResponse
     /** @var string margins: top, right, bottom, left, header, footer */
     private $pageMargins = "16,15,16,15,9,9";
 
-    /** @var Mpdf */
+    /** @var Mpdf|null */
     private $mPDF = null;
 
-    /** @var  mPDF */
-    private $generatedFile;
+    /** @var  Mpdf|null */
+    private $generatedFile = null;
 
     /************************************ properties **************************************/
 
     /**
      * @return string
      */
-    public function getDocumentAuthor()
+    public function getDocumentAuthor(): string
     {
         return $this->documentAuthor;
     }
 
 
-
     /**
      * @param string $documentAuthor
      */
-    public function setDocumentAuthor($documentAuthor)
+    public function setDocumentAuthor(string $documentAuthor): void
     {
         $this->documentAuthor = (string)$documentAuthor;
     }
 
 
-
     /**
      * @return string
      */
-    public function getDocumentTitle()
+    public function getDocumentTitle(): string
     {
         return $this->documentTitle;
     }
 
 
-
     /**
      * @param string $documentTitle
      */
-    public function setDocumentTitle($documentTitle)
+    public function setDocumentTitle(string $documentTitle): void
     {
         $this->documentTitle = (string)$documentTitle;
     }
 
 
-
     /**
-     * @return string
+     * @return string|int
      */
     public function getDisplayZoom()
     {
@@ -166,22 +167,25 @@ class PdfResponse implements Nette\Application\IResponse
     }
 
 
-
     /**
-     * @param string $displayZoom
+     * @param string|int $displayZoom
      */
-    public function setDisplayZoom($displayZoom)
+    public function setDisplayZoom($displayZoom): void
     {
-        if (!in_array($displayZoom, array(self::ZOOM_DEFAULT, self::ZOOM_FULLPAGE, self::ZOOM_FULLWIDTH, self::ZOOM_REAL)) && $displayZoom <= 0) {
+        if (!in_array($displayZoom, array(
+                self::ZOOM_DEFAULT,
+                self::ZOOM_FULLPAGE,
+                self::ZOOM_FULLWIDTH,
+                self::ZOOM_REAL
+            )) && $displayZoom <= 0) {
             throw new InvalidArgumentException("Invalid zoom '$displayZoom', use PdfResponse::ZOOM_* constants or o positive integer.");
         }
         $this->displayZoom = $displayZoom;
     }
 
 
-
     /**
-     * @return mixed
+     * @return string
      */
     public function getDisplayLayout()
     {
@@ -189,15 +193,22 @@ class PdfResponse implements Nette\Application\IResponse
     }
 
 
-
     /**
-     * @param mixed $displayLayout
+     * @param string $displayLayout
+     * @throws InvalidArgumentException
      */
-    public function setDisplayLayout($displayLayout)
+    public function setDisplayLayout(string $displayLayout): void
     {
         if (!in_array(
                 $displayLayout,
-                array(self::LAYOUT_DEFAULT, self::LAYOUT_CONTINUOUS, self::LAYOUT_SINGLE, self::LAYOUT_TWO, self::LAYOUT_TWOLEFT, self::LAYOUT_TWORIGHT)
+                array(
+                    self::LAYOUT_DEFAULT,
+                    self::LAYOUT_CONTINUOUS,
+                    self::LAYOUT_SINGLE,
+                    self::LAYOUT_TWO,
+                    self::LAYOUT_TWOLEFT,
+                    self::LAYOUT_TWORIGHT
+                )
             ) && $displayLayout <= 0
         ) {
             throw new InvalidArgumentException("Invalid layout '$displayLayout', use PdfResponse::LAYOUT* constants.");
@@ -206,55 +217,49 @@ class PdfResponse implements Nette\Application\IResponse
     }
 
 
-
     /**
      * @return boolean
      */
-    public function isMultiLanguage()
+    public function isMultiLanguage(): bool
     {
         return $this->multiLanguage;
     }
 
 
-
     /**
      * @param boolean $multiLanguage
      */
-    public function setMultiLanguage($multiLanguage)
+    public function setMultiLanguage(bool $multiLanguage): void
     {
         $this->multiLanguage = (bool)$multiLanguage;
     }
 
 
-
     /**
      * @return boolean
      */
-    public function isIgnoreStylesInHTMLDocument()
+    public function isIgnoreStylesInHTMLDocument(): bool
     {
         return $this->ignoreStylesInHTMLDocument;
     }
 
 
-
     /**
      * @param boolean $ignoreStylesInHTMLDocument
      */
-    public function setIgnoreStylesInHTMLDocument($ignoreStylesInHTMLDocument)
+    public function setIgnoreStylesInHTMLDocument(bool $ignoreStylesInHTMLDocument): void
     {
         $this->ignoreStylesInHTMLDocument = (bool)$ignoreStylesInHTMLDocument;
     }
 
 
-
     /**
      * @return string
      */
-    public function getSaveMode()
+    public function getSaveMode(): string
     {
         return $this->saveMode;
     }
-
 
 
     /**
@@ -264,7 +269,7 @@ class PdfResponse implements Nette\Application\IResponse
      * @param string $saveMode
      * @throws InvalidArgumentException
      */
-    public function setSaveMode($saveMode)
+    public function setSaveMode(string $saveMode): void
     {
         if (!in_array($saveMode, array(self::DOWNLOAD, self::INLINE))) {
             throw new InvalidArgumentException("Invalid mode '$saveMode', use PdfResponse::INLINE or PdfResponse::DOWNLOAD instead.");
@@ -273,15 +278,13 @@ class PdfResponse implements Nette\Application\IResponse
     }
 
 
-
     /**
      * @return string
      */
-    public function getPageOrientation()
+    public function getPageOrientation(): string
     {
         return $this->pageOrientation;
     }
-
 
 
     /**
@@ -289,7 +292,7 @@ class PdfResponse implements Nette\Application\IResponse
      * @throws InvalidStateException
      * @throws InvalidArgumentException
      */
-    public function setPageOrientation($pageOrientation)
+    public function setPageOrientation(string $pageOrientation): void
     {
         if ($this->mPDF) {
             throw new InvalidStateException('mPDF instance already created. Set page orientation before calling getMPDF');
@@ -301,22 +304,20 @@ class PdfResponse implements Nette\Application\IResponse
     }
 
 
-
     /**
      * @return string
      */
-    public function getPageFormat()
+    public function getPageFormat(): string
     {
         return $this->pageFormat;
     }
-
 
 
     /**
      * @param string $pageFormat
      * @throws InvalidStateException
      */
-    public function setPageFormat($pageFormat)
+    public function setPageFormat(string $pageFormat): void
     {
         if ($this->mPDF) {
             throw new InvalidStateException('mPDF instance already created. Set page format before calling getMPDF');
@@ -325,22 +326,20 @@ class PdfResponse implements Nette\Application\IResponse
     }
 
 
-
     /**
      * @return string
      */
-    public function getPageMargins()
+    public function getPageMargins(): string
     {
         return $this->pageMargins;
     }
-
 
 
     /**
      * Gets margins as array
      * @return array
      */
-    public function getMargins()
+    public function getMargins(): array
     {
         $margins = explode(",", $this->pageMargins);
 
@@ -355,13 +354,12 @@ class PdfResponse implements Nette\Application\IResponse
     }
 
 
-
     /**
      * @param string $pageMargins
      * @throws InvalidStateException
      * @throws InvalidArgumentException
      */
-    public function setPageMargins($pageMargins)
+    public function setPageMargins(string $pageMargins): void
     {
         if ($this->mPDF) {
             throw new InvalidStateException('mPDF instance already created. Set page margins before calling getMPDF');
@@ -383,15 +381,15 @@ class PdfResponse implements Nette\Application\IResponse
     }
 
 
-
     /**
      * WARNING: internally creates mPDF instance, setting some properties after calling this method
      * may cause an Exception
      *
      * @param string $pathToBackgroundTemplate
      * @throws FileNotFoundException
+     * @throws PdfParserExceptionAlias
      */
-    public function setBackgroundTemplate($pathToBackgroundTemplate)
+    public function setBackgroundTemplate(string $pathToBackgroundTemplate): void
     {
         if (!file_exists($pathToBackgroundTemplate)) {
             throw new FileNotFoundException("File '$pathToBackgroundTemplate' not found.");
@@ -400,10 +398,9 @@ class PdfResponse implements Nette\Application\IResponse
 
         // if background exists, then add it as a background
         $mpdf = $this->getMPDF();
-        $mpdf->SetImportUse();
-        $pagecount = $mpdf->SetSourceFile($this->backgroundTemplate);
+        $pagecount = $mpdf->setSourceFile($this->backgroundTemplate);
         for ($i = 1; $i <= $pagecount; $i++) {
-            $tplId = $mpdf->ImportPage($i);
+            $tplId = $mpdf->importPage($i);
             $mpdf->UseTemplate($tplId);
 
             if ($i < $pagecount) {
@@ -414,11 +411,10 @@ class PdfResponse implements Nette\Application\IResponse
     }
 
 
-
     /**
      * @return array
      */
-    protected function getMPDFConfig()
+    protected function getMPDFConfig(): array
     {
         $margins = $this->getMargins();
         return [
@@ -435,16 +431,19 @@ class PdfResponse implements Nette\Application\IResponse
     }
 
 
-
     /**
-     * @throws InvalidStateException
      * @return Mpdf
+     * @throws InvalidStateException
      */
-    public function getMPDF()
+    public function getMPDF(): Mpdf
     {
         if (!$this->mPDF instanceof Mpdf) {
 
-            $mpdf = new Mpdf($this->getMPDFConfig());
+            try {
+                $mpdf = new Mpdf($this->getMPDFConfig());
+            } catch (MpdfException $e) {
+                throw new InvalidStateException("Unable to create Mpdf object", 0, $e);
+            }
 
             $mpdf->showImageErrors = true;
 
@@ -483,12 +482,14 @@ class PdfResponse implements Nette\Application\IResponse
      * Builds final pdf
      *
      * @return mPDF
-     * @throws \Exception
+     * @throws InvalidStateException
+     * @throws MissingServiceException
+     * @throws MpdfException
      */
-    private function build()
+    private function build(): Mpdf
     {
         if (empty($this->documentTitle)) {
-            throw new \Exception ("Var 'documentTitle' cannot be empty.");
+            throw new InvalidStateException("Var 'documentTitle' cannot be empty.");
         }
         if ($this->ignoreStylesInHTMLDocument) {
             if (!class_exists('Symfony\Component\DomCrawler\Crawler')) {
@@ -508,14 +509,19 @@ class PdfResponse implements Nette\Application\IResponse
         }
 
         if ($this->source instanceof Template) {
-            $html = $this->source->__toString();
+            try {
+                /** @noinspection PhpMethodParametersCountMismatchInspection */
+                $html = $this->source->__toString(true);
+            } catch (Throwable $e) {
+                throw new InvalidStateException("Template rendering failed", 0, $e);
+            }
         } else {
             $html = $this->source;
         }
 
         // Fix: $html can't be empty (mPDF generates Fatal error)
         if (empty($html)) {
-            $html = '<html><body></body></html>';
+            $html = '<html lang=""><body></body></html>';
         }
 
         $mpdf = $this->getMPDF();
@@ -526,7 +532,7 @@ class PdfResponse implements Nette\Application\IResponse
 
         // Add styles
         if (!empty($this->styles)) {
-            $mpdf->WriteHTML($this->styles, 1);
+            $mpdf->WriteHTML($this->styles, HTMLParserMode::HEADER_CSS);
         }
 
         // copied from mPDF -> removes comments
@@ -544,9 +550,9 @@ class PdfResponse implements Nette\Application\IResponse
             }
             $html = $crawler->html();
 
-            $mode = 2; // If <body> tags are found, all html outside these tags are discarded, and the rest is parsed as content for the document. If no <body> tags are found, all html is parsed as content. Prior to mPDF 4.2 the default CSS was not parsed when using mode #2
+            $mode = HTMLParserMode::HTML_BODY; // If <body> tags are found, all html outside these tags are discarded, and the rest is parsed as content for the document. If no <body> tags are found, all html is parsed as content. Prior to mPDF 4.2 the default CSS was not parsed when using mode #2
         } else {
-            $mode = 0; // Parse all: HTML + CSS
+            $mode = HTMLParserMode::DEFAULT_MODE; // Parse all: HTML + CSS
         }
 
         // Add content
@@ -569,13 +575,13 @@ class PdfResponse implements Nette\Application\IResponse
      * @param IRequest $httpRequest
      * @param IResponse $httpResponse
      * @return void
+     * @throws MpdfException
      */
-    public function send(IRequest $httpRequest, IResponse $httpResponse)
+    public function send(IRequest $httpRequest, IResponse $httpResponse): void
     {
         $mpdf = $this->build();
         $mpdf->Output(Strings::webalize($this->documentTitle) . ".pdf", $this->saveMode);
     }
-
 
 
     /**
@@ -583,12 +589,13 @@ class PdfResponse implements Nette\Application\IResponse
      * Note: $name overrides property $documentTitle
      *
      * @param string $dir path to directory
-     * @param string $filename
+     * @param string|null $filename
      * @return string
+     * @throws MpdfException
      */
-    public function save($dir, $filename = null)
+    public function save(string $dir, ?string $filename = null): string
     {
-        $content = $this->__toString();
+        $content = $this->toString();
         $filename = Strings::lower($filename ?: $this->documentTitle);
 
         if (Strings::endsWith($filename, ".pdf")) {
@@ -603,6 +610,15 @@ class PdfResponse implements Nette\Application\IResponse
         return $dir . $filename;
     }
 
+    /**
+     * @return string
+     * @throws MpdfException
+     */
+    public function toString()
+    {
+        $pdf = $this->build();
+        return $pdf->Output("", Destination::STRING_RETURN);
+    }
 
 
     /**
@@ -612,8 +628,14 @@ class PdfResponse implements Nette\Application\IResponse
      */
     public function __toString()
     {
-        $pdf = $this->build();
-        return $pdf->Output("", "S");
+        $string = "";
+        try {
+            $string = $this->toString();
+        } catch (MpdfException $e) {
+            trigger_error('Exception in ' . __METHOD__ . "(): {$e->getMessage()} in {$e->getFile()}:{$e->getLine()}",
+                E_USER_ERROR);
+        }
+        return $string;
     }
 
 }
