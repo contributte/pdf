@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Joseki\Application\Responses;
 
 use Mpdf\HTMLParserMode;
@@ -48,29 +50,29 @@ class PdfResponse implements Nette\Application\IResponse
     use Nette\SmartObject;
 
     /** possible save modes */
-    const INLINE = "I";
+    public const INLINE = "I";
 
-    const DOWNLOAD = "D";
+    public const DOWNLOAD = "D";
 
     /**  Portrait page orientation */
-    const ORIENTATION_PORTRAIT = "P";
+    public const ORIENTATION_PORTRAIT = "P";
 
     /** Landscape page orientation */
-    const ORIENTATION_LANDSCAPE = "L";
+    public const ORIENTATION_LANDSCAPE = "L";
 
     /** @see https://mpdf.github.io/reference/mpdf-functions/setdisplaymode.html */
-    const ZOOM_DEFAULT = "default"; // User’s default setting in Adobe Reader
-    const ZOOM_FULLPAGE = "fullpage"; // Fit a whole page in the screen
-    const ZOOM_FULLWIDTH = "fullwidth"; // Fit the width of the page in the screen
-    const ZOOM_REAL = "real"; // Display at real size
+    public const ZOOM_DEFAULT = "default"; // User’s default setting in Adobe Reader
+    public const ZOOM_FULLPAGE = "fullpage"; // Fit a whole page in the screen
+    public const ZOOM_FULLWIDTH = "fullwidth"; // Fit the width of the page in the screen
+    public const ZOOM_REAL = "real"; // Display at real size
 
     /** @see https://mpdf.github.io/reference/mpdf-functions/setdisplaymode.html */
-    const LAYOUT_SINGLE = "single"; // Display one page at a time
-    const LAYOUT_CONTINUOUS = "continuous"; // Display the pages in one column
-    const LAYOUT_TWO = "two"; // Display the pages in two columns (first page determined by document direction (e.g. RTL))
-    const LAYOUT_TWOLEFT = "twoleft"; // Display the pages in two columns, with the first page displayed on the left side (mPDF >= 5.2)
-    const LAYOUT_TWORIGHT = "tworight"; // Display the pages in two columns, with the first page displayed on the right side (mPDF >= 5.2)
-    const LAYOUT_DEFAULT = "default"; // User’s default setting in Adobe Reader
+    public const LAYOUT_SINGLE = "single"; // Display one page at a time
+    public const LAYOUT_CONTINUOUS = "continuous"; // Display the pages in one column
+    public const LAYOUT_TWO = "two"; // Display the pages in two columns (first page determined by document direction (e.g. RTL))
+    public const LAYOUT_TWOLEFT = "twoleft"; // Display the pages in two columns, with the first page displayed on the left side (mPDF >= 5.2)
+    public const LAYOUT_TWORIGHT = "tworight"; // Display the pages in two columns, with the first page displayed on the right side (mPDF >= 5.2)
+    public const LAYOUT_DEFAULT = "default"; // User’s default setting in Adobe Reader
 
     /** @var array onBeforeComplete event */
     public $onBeforeComplete = array();
@@ -115,10 +117,10 @@ class PdfResponse implements Nette\Application\IResponse
     private $pageMargins = "16,15,16,15,9,9";
 
     /** @var Mpdf|null */
-    private $mPDF = null;
+    private $mPDF;
 
     /** @var  Mpdf|null */
-    private $generatedFile = null;
+    private $generatedFile;
 
     /************************************ properties **************************************/
 
@@ -136,7 +138,7 @@ class PdfResponse implements Nette\Application\IResponse
      */
     public function setDocumentAuthor(string $documentAuthor): void
     {
-        $this->documentAuthor = (string)$documentAuthor;
+        $this->documentAuthor = $documentAuthor;
     }
 
 
@@ -154,7 +156,7 @@ class PdfResponse implements Nette\Application\IResponse
      */
     public function setDocumentTitle(string $documentTitle): void
     {
-        $this->documentTitle = (string)$documentTitle;
+        $this->documentTitle = $documentTitle;
     }
 
 
@@ -172,12 +174,12 @@ class PdfResponse implements Nette\Application\IResponse
      */
     public function setDisplayZoom($displayZoom): void
     {
-        if (!in_array($displayZoom, array(
+        if ($displayZoom <= 0 && !in_array($displayZoom, array(
                 self::ZOOM_DEFAULT,
                 self::ZOOM_FULLPAGE,
                 self::ZOOM_FULLWIDTH,
                 self::ZOOM_REAL
-            )) && $displayZoom <= 0) {
+            ), true)) {
             throw new InvalidArgumentException("Invalid zoom '$displayZoom', use PdfResponse::ZOOM_* constants or o positive integer.");
         }
         $this->displayZoom = $displayZoom;
@@ -187,9 +189,9 @@ class PdfResponse implements Nette\Application\IResponse
     /**
      * @return string
      */
-    public function getDisplayLayout()
+    public function getDisplayLayout(): string
     {
-        return $this->displayLayout;
+        return (string) $this->displayLayout;
     }
 
 
@@ -199,7 +201,7 @@ class PdfResponse implements Nette\Application\IResponse
      */
     public function setDisplayLayout(string $displayLayout): void
     {
-        if (!in_array(
+        if ($displayLayout <= 0 && !in_array(
                 $displayLayout,
                 array(
                     self::LAYOUT_DEFAULT,
@@ -208,12 +210,13 @@ class PdfResponse implements Nette\Application\IResponse
                     self::LAYOUT_TWO,
                     self::LAYOUT_TWOLEFT,
                     self::LAYOUT_TWORIGHT
-                )
-            ) && $displayLayout <= 0
+                ),
+				true
+            )
         ) {
             throw new InvalidArgumentException("Invalid layout '$displayLayout', use PdfResponse::LAYOUT* constants.");
         }
-        $this->displayLayout = (string)$displayLayout;
+        $this->displayLayout = $displayLayout;
     }
 
 
@@ -231,7 +234,7 @@ class PdfResponse implements Nette\Application\IResponse
      */
     public function setMultiLanguage(bool $multiLanguage): void
     {
-        $this->multiLanguage = (bool)$multiLanguage;
+        $this->multiLanguage = $multiLanguage;
     }
 
 
@@ -249,7 +252,7 @@ class PdfResponse implements Nette\Application\IResponse
      */
     public function setIgnoreStylesInHTMLDocument(bool $ignoreStylesInHTMLDocument): void
     {
-        $this->ignoreStylesInHTMLDocument = (bool)$ignoreStylesInHTMLDocument;
+        $this->ignoreStylesInHTMLDocument = $ignoreStylesInHTMLDocument;
     }
 
 
@@ -271,7 +274,7 @@ class PdfResponse implements Nette\Application\IResponse
      */
     public function setSaveMode(string $saveMode): void
     {
-        if (!in_array($saveMode, array(self::DOWNLOAD, self::INLINE))) {
+        if (!in_array($saveMode, array(self::DOWNLOAD, self::INLINE), true)) {
             throw new InvalidArgumentException("Invalid mode '$saveMode', use PdfResponse::INLINE or PdfResponse::DOWNLOAD instead.");
         }
         $this->saveMode = $saveMode;
@@ -297,7 +300,7 @@ class PdfResponse implements Nette\Application\IResponse
         if ($this->mPDF) {
             throw new InvalidStateException('mPDF instance already created. Set page orientation before calling getMPDF');
         }
-        if (!in_array($pageOrientation, array(self::ORIENTATION_PORTRAIT, self::ORIENTATION_LANDSCAPE))) {
+        if (!in_array($pageOrientation, array(self::ORIENTATION_PORTRAIT, self::ORIENTATION_LANDSCAPE), true)) {
             throw new InvalidArgumentException('Unknown page orientation');
         }
         $this->pageOrientation = $pageOrientation;
@@ -412,7 +415,7 @@ class PdfResponse implements Nette\Application\IResponse
 
 
     /**
-     * @return array
+     * @return mixed[]
      */
     protected function getMPDFConfig(): array
     {
@@ -614,10 +617,10 @@ class PdfResponse implements Nette\Application\IResponse
      * @return string
      * @throws MpdfException
      */
-    public function toString()
+    public function toString(): string
     {
         $pdf = $this->build();
-        return $pdf->Output("", Destination::STRING_RETURN);
+        return (string) $pdf->Output("", Destination::STRING_RETURN);
     }
 
 
@@ -626,7 +629,7 @@ class PdfResponse implements Nette\Application\IResponse
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $string = "";
         try {
