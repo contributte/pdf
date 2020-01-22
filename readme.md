@@ -1,4 +1,4 @@
-PDF Response for Nette 2
+PDF Response for Nette
 ===
 
 [![Build Status](https://travis-ci.org/Joseki/PdfResponse.svg?branch=master)](https://travis-ci.org/Joseki/PdfResponse)
@@ -155,5 +155,5 @@ public function actionPdf()
 See also
 ---
 
-- [Nette forum](http://forum.nette.org/cs/3726-addon-pdfresponse-pdfresponse) (czech)
-- [Nette Addons](http://addons.nette.org/joseki/pdf-response)
+- [Nette forum](https://forum.nette.org/cs/3726-addon-pdfresponse-pdfresponse) (czech)
+- [Componette](https://componette.com/joseki/pdfresponse/)
