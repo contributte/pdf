@@ -33,7 +33,7 @@ use Throwable;
  *
  * @property string $saveMode
  * @property string $pageOrientation
- * @property string $pageFormat
+ * @property string|array $pageFormat
  * @property string $pageMargins
  * @property string $documentAuthor
  * @property string $documentTitle
@@ -305,19 +305,19 @@ class PdfResponse implements Nette\Application\IResponse
 
 
     /**
-     * @return string
+     * @return string|array
      */
-    public function getPageFormat(): string
+    public function getPageFormat()
     {
         return $this->pageFormat;
     }
 
 
     /**
-     * @param string $pageFormat
+     * @param string|array $pageFormat
      * @throws InvalidStateException
      */
-    public function setPageFormat(string $pageFormat): void
+    public function setPageFormat($pageFormat): void
     {
         if ($this->mPDF) {
             throw new InvalidStateException('mPDF instance already created. Set page format before calling getMPDF');
