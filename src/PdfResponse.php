@@ -442,7 +442,8 @@ class PdfResponse implements Nette\Application\IResponse
     protected function getMPDFConfig(): array
     {
         $margins = $this->getMargins();
-        return $this->mpdfConfig + [
+
+        $mpdfConfig = [
             'mode' => 'utf-8',
             'format' => $this->pageFormat,
             'margin_left' => $margins["left"],
@@ -453,6 +454,8 @@ class PdfResponse implements Nette\Application\IResponse
             'margin_footer' => $margins["footer"],
             'orientation' => $this->pageOrientation
         ];
+
+        return $this->mpdfConfig ? $this->mpdfConfig + $mpdfConfig : $mpdfConfig;
     }
 
 
@@ -463,7 +466,6 @@ class PdfResponse implements Nette\Application\IResponse
     public function getMPDF(): Mpdf
     {
         if (!$this->mPDF instanceof Mpdf) {
-
             try {
                 $mpdf = new Mpdf($this->getMPDFConfig());
             } catch (MpdfException $e) {
@@ -544,7 +546,16 @@ class PdfResponse implements Nette\Application\IResponse
 
         $mpdf = $this->getMPDF();
         $mpdf->biDirectional = $this->multiLanguage;
-        $mpdf->SetAuthor($this->documentAuthor);
+        $author = isset($this->mpdfConfig['author']) ? $this->mpdfConfig['author'] : $this->documentAuthor;
+
+        $mpdf->author = $author;
+
+        if($this->mpdfConfig) {
+            foreach ($this->mpdfConfig as $key => $value) {
+                $mpdf->$key = $value;
+            }
+        }
+
         $mpdf->SetTitle($this->documentTitle);
         $mpdf->SetDisplayMode($this->displayZoom, $this->displayLayout);
 

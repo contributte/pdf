@@ -152,16 +152,36 @@ public function actionPdf()
 }
 ```
 
-Configuration of custom temp dir for mPDF in PdfResponse
+Global configuration of custom config for mPDF in PdfResponse
 ---
 
 ```yml
 services:
-    -
-        factory: Joseki\Application\Responses\PdfResponse
-        setup:
-            - $mpdfConfig([tempDir: %tempDir%/mpdf])
+    - Joseki\Application\Responses\PdfResponseFactory({tempDir: %tempDir%/mpdf, author: Bar Foo})
 ```
+
+and in your PHP code:
+
+```php
+/**
+ * @var \Joseki\Application\Responses\PdfResponseFactory
+ * @inject
+ */
+public $pdfResponseFactory;
+
+public function actionPdf()
+{
+    ....
+    $template = $this->createTemplate();
+    $template->setFile(__DIR__ . "/templates/pdf.latte");
+
+    $pdfResponse = $this->pdfResponseFactory->createResponse();
+    $pdfResponse->setTemplate($template);
+
+    $this->sendResponse($pdfResponse);
+}
+```
+
 
 See also
 ---
