@@ -152,7 +152,7 @@ public function actionPdf()
 }
 ```
 
-Configuration of custom temp dir for mPDF in PdfResponse
+Configuration and usage of custom temp dir for mPDF in PdfResponse
 ---
 
 ```yml
@@ -161,6 +161,20 @@ services:
         factory: Joseki\Application\Responses\PdfResponse
         setup:
             - $mpdfConfig([tempDir: %tempDir%/mpdf])
+```
+
+and in your PHP code:
+
+```php
+/** @var Joseki\Application\Responses\PdfResponse */
+public $pdfResponse;
+
+public function actionPdf()
+{
+    ....
+
+    $this->sendResponse($this->pdfResponse);
+}
 ```
 
 See also
