@@ -1,25 +1,20 @@
-PDF Response for Nette
-===
+# Joseki\PdfResponse
 
-[![Build Status](https://travis-ci.org/Joseki/PdfResponse.svg?branch=master)](https://travis-ci.org/Joseki/PdfResponse)
-[![Latest Stable Version](https://poser.pugx.org/joseki/pdf-response/v/stable)](https://packagist.org/packages/joseki/pdf-response)
-[![Total Downloads](https://poser.pugx.org/joseki/pdf-response/downloads)](https://packagist.org/packages/joseki/pdf-response)
+## Content
 
-- sends template as PDF output using mPDF library
-- works with Nette v2.2+
-- requires PHP 5.4 or higher
+- [Usage - how use it](#usage)
+    - [How to prepare PDF from template](#how-to-prepare-pdf-from-template)
+    - [Save file to server](#save-file-to-server)
+    - [Attach file to an email](#attach-file-to-an-email)
+    - [Force file to download](#force-file-to-download)
+	- [Force file to display in a browser](#force-file-to-display-in-a-browser)
+	- [Set a pdf background easily](#set-a-pdf-background-easily)
+	- [Create pdf with latte only](#create-pdf-with-latte-only)
+	- [Configuration of custom temp dir for mPDF in PdfResponse](#configuration-of-custom-temp-dir-for-mpdf-in-pdfresponse)
 
-Install
----
-Installation via Composer.
+## Usage
 
-```sh
-composer require joseki/pdf-response ">= 2.1"
-```
-
-
-How to prepare PDF from template
----
+### How to prepare PDF from template
 
 ```php
 // in a Presenter
@@ -42,8 +37,7 @@ public function actionPdf()
 }
 ```
 
-Save file to server
----
+### Save file to server
 
 ```php
 public function actionPdf()
@@ -58,8 +52,7 @@ public function actionPdf()
 }
 ```
 
-Attach file to an email
----
+### Attach file to an email
 
 ```php
 public function actionPdf()
@@ -78,8 +71,7 @@ public function actionPdf()
 }
 ```
 
-Force file to download
----
+### Force file to download
 
 ```php
 public function actionPdf()
@@ -93,8 +85,7 @@ public function actionPdf()
 }
 ```
 
-Force file to display in a browser
----
+### Force file to display in a browser
 
 ```php
 public function actionPdf()
@@ -108,8 +99,7 @@ public function actionPdf()
 }
 ```
 
-Set a pdf background easily
----
+### Set a pdf background easily
 
 ```php
 public function actionPdf()
@@ -131,8 +121,7 @@ public function actionPdf()
 }
 ```
 
-Create pdf with latte only
----
+### Create pdf with latte only
 
 ```php
 public function actionPdf()
@@ -152,34 +141,14 @@ public function actionPdf()
 }
 ```
 
-Global configuration of custom config for mPDF in PdfResponse
----
+### Configuration of custom temp dir for mPDF in PdfResponse
 
 ```yml
 services:
-    - Joseki\Application\Responses\PdfResponseFactory({tempDir: %tempDir%/mpdf, author: Bar Foo})
-```
-
-and in your PHP code:
-
-```php
-/**
- * @var \Joseki\Application\Responses\PdfResponseFactory
- * @inject
- */
-public $pdfResponseFactory;
-
-public function actionPdf()
-{
-    ....
-    $template = $this->createTemplate();
-    $template->setFile(__DIR__ . "/templates/pdf.latte");
-
-    $pdfResponse = $this->pdfResponseFactory->createResponse();
-    $pdfResponse->setTemplate($template);
-
-    $this->sendResponse($pdfResponse);
-}
+    -
+        factory: Joseki\Application\Responses\PdfResponse
+        setup:
+            - $mpdfConfig([tempDir: %tempDir%/mpdf])
 ```
 
 
@@ -188,3 +157,9 @@ See also
 
 - [Nette forum](https://forum.nette.org/cs/3726-addon-pdfresponse-pdfresponse) (czech)
 - [Componette](https://componette.com/joseki/pdfresponse/)
+
+
+
+-----
+
+Thanks for testing, reporting and contributing.
