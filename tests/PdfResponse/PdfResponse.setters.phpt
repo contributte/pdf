@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Test: Joseki\Application\Responses\PdfResponse.
+ * Test: Contributte\PdfResponse\PdfResponse.
  */
 
-use Joseki\Application\Responses\PdfResponse;
-use Joseki\Application\Responses\InvalidArgumentException;
+use Contributte\PdfResponse\PdfResponse;
+use Contributte\PdfResponse\InvalidArgumentException;
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';

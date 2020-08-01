@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Test: Joseki\Application\Responses\PdfResponse and page format.
+ * Test: Contributte\PdfResponse\PdfResponse and page format.
  * @httpCode -
  */
 
-use Joseki\Application\Responses\PdfResponse;
-use Joseki\Application\Responses\InvalidStateException;
+use Contributte\PdfResponse\PdfResponse;
+use Contributte\PdfResponse\InvalidStateException;
 use Nette\Http;
 use Tester\Assert;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Joseki\Application\Responses;
+namespace Contributte\PdfResponse;
 
 /**
  * @author Petr Parolek <petr.parolek@webnazakazku.cz>

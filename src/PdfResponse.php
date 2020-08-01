@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Joseki\Application\Responses;
+namespace Contributte\PdfResponse;
 
 use Mpdf\HTMLParserMode;
 use Mpdf\Mpdf;

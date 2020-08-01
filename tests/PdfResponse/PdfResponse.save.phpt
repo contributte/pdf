@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Test: Joseki\Application\Responses\PdfResponse.
+ * Test: Contributte\PdfResponse\PdfResponse.
  */
 
-use Joseki\Application\Responses\PdfResponse;
+use Contributte\PdfResponse\PdfResponse;
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';

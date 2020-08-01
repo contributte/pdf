@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Test: Joseki\Application\Responses\PdfResponse and Symfony crawler
+ * Test: Contributte\PdfResponse\PdfResponse and Symfony crawler
  */
 
-use Joseki\Application\Responses\PdfResponse;
+use Contributte\PdfResponse\PdfResponse;
 use Nette\Http;
 use Tester\Assert;
 

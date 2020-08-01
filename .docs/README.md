@@ -1,4 +1,4 @@
-# Joseki\PdfResponse
+# Contributte\PdfResponse
 
 ## Content
 
@@ -25,7 +25,7 @@ public function actionPdf()
     $template->someValue = 123;
     // Tip: In template to make a new page use <pagebreak>
 
-    $pdf = new \Joseki\Application\Responses\PdfResponse($template);
+    $pdf = new \Contributte\PdfResponse\PdfResponse($template);
 
     // optional
     $pdf->documentTitle = date("Y-m-d") . " My super title"; // creates filename 2012-06-30-my-super-title.pdf
@@ -45,7 +45,7 @@ public function actionPdf()
     $template = $this->createTemplate();
     $template->setFile(__DIR__ . "/path/to/template.latte");
 
-    $pdf = new \Joseki\Application\Responses\PdfResponse($template);
+    $pdf = new \Contributte\PdfResponse\PdfResponse($template);
 
     $pdf->save(__DIR__ . "/path/to/directory"); // as a filename $this->documentTitle will be used
     $pdf->save(__DIR__ . "/path/to/directory", "filename"); // OR use a custom name
@@ -60,7 +60,7 @@ public function actionPdf()
     $template = $this->createTemplate();
     $template->setFile(__DIR__ . "/path/to/template.latte");
 
-    $pdf = new \Joseki\Application\Responses\PdfResponse($template);
+    $pdf = new \Contributte\PdfResponse\PdfResponse($template);
 
     $savedFile = $pdf->save(__DIR__ . "/path/to/directory");
     $mail = new Nette\Mail\Message;
@@ -79,7 +79,7 @@ public function actionPdf()
     $template = $this->createTemplate();
     $template->setFile(__DIR__ . "/path/to/template.latte");
 
-    $pdf = new \Joseki\Application\Responses\PdfResponse($template);
+    $pdf = new \Contributte\PdfResponse\PdfResponse($template);
     $pdf->setSaveMode(PdfResponse::DOWNLOAD); //default behavior
     $this->sendResponse($pdf);
 }
@@ -93,7 +93,7 @@ public function actionPdf()
     $template = $this->createTemplate();
     $template->setFile(__DIR__ . "/path/to/template.latte");
 
-    $pdf = new \Joseki\Application\Responses\PdfResponse($template);
+    $pdf = new \Contributte\PdfResponse\PdfResponse($template);
     $pdf->setSaveMode(PdfResponse::INLINE);
     $this->sendResponse($pdf);
 }
@@ -104,7 +104,7 @@ public function actionPdf()
 ```php
 public function actionPdf()
 {
-    $pdf = new Joseki\Application\Responses\PdfResponse('');
+    $pdf = new \Contributte\PdfResponse\PdfResponse('');
     $pdf->setBackgroundTemplate(__DIR__ . "/path/to/an/existing/file.pdf");
 
     // to write into an existing document use the following statements
@@ -136,7 +136,7 @@ public function actionPdf()
 
     $template = $latte->renderToString(__DIR__ . "/path/to/template.latte");
 
-    $pdf = new \Joseki\Application\Responses\PdfResponse($template);
+    $pdf = new \Contributte\PdfResponse\PdfResponse($template);
     $this->sendResponse($pdf);
 }
 ```
@@ -146,7 +146,7 @@ public function actionPdf()
 ```yml
 services:
     -
-        factory: Joseki\Application\Responses\PdfResponse
+        factory: Contributte\PdfResponse\PdfResponse
         setup:
             - $mpdfConfig([tempDir: %tempDir%/mpdf])
 ```

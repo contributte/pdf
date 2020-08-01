@@ -17,13 +17,13 @@ test(
                     author: $author
 
             services:
-                - Joseki\Application\Responses\PdfResponseFactory(%mpdfConfig%)
+                - Contributte\PdfResponse\PdfResponseFactory(%mpdfConfig%)
         ";
 
         $container = createContainer(new Compiler, $config);
 
-        /** @var Joseki\Application\Responses\PdfResponseFactory $instance */
-        $factoryInstance = $container->getByType(Joseki\Application\Responses\PdfResponseFactory::class);
+        /** @var Contributte\PdfResponse\PdfResponseFactory $instance */
+        $factoryInstance = $container->getByType(Contributte\PdfResponse\PdfResponseFactory::class);
         Assert::same($author, $factoryInstance->mpdfConfig['author']);
         Assert::same($mpdfTmpDir, $factoryInstance->mpdfConfig['tempDir']);
     }

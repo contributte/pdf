@@ -1,6 +1,6 @@
 <?php
 
-namespace Joseki\Application\Responses;
+namespace Contributte\PdfResponse;
 
 class MissingServiceException extends \LogicException
 {
