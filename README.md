@@ -46,7 +46,7 @@ See [how to contribute](https://contributte.org) to this package. This package i
     <img width="80" height="80" src="https://avatars2.githubusercontent.com/u/538058?v=3&s=80">
 </a>
 <a href="https://github.com/petrparolek">
-    <img width="150" height="150" src="https://avatars0.githubusercontent.com/u/6066243?s=150&v=4">
+    <img width="80" height="80" src="https://avatars0.githubusercontent.com/u/6066243?s=150&v=4">
 </a>
 
 -----
