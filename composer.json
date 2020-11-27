@@ -46,7 +46,9 @@
     "license": "LGPL-3.0",
     "autoload": {
         "psr-4": {
-            "Contributte\\PdfResponse\\": "src/"
-        }
+            "Contributte\\PdfResponse\\": "src/",
+			"Joseki\\Application\\Responses\\": "src-old/"
+        },
+		"files": ["src/compatibility.php"]
     }
 }
