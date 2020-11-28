@@ -47,8 +47,8 @@
     "autoload": {
         "psr-4": {
             "Contributte\\PdfResponse\\": "src/",
-			"Joseki\\Application\\Responses\\": "src-old/"
+            "Joseki\\Application\\Responses\\": "src-old/"
         },
-		"files": ["src/compatibility.php"]
+        "files": ["src/compatibility.php"]
     }
 }
