@@ -9,10 +9,10 @@ namespace Contributte\PdfResponse;
  */
 class PdfResponseFactory
 {
-    /** @var array|null */
+    /** @var array */
     public $mpdfConfig;
 
-    public function __construct(?array $mpdfConfig)
+    public function __construct(array $mpdfConfig)
     {
         $this->mpdfConfig = $mpdfConfig;
     }
