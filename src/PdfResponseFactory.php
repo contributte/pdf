@@ -1,28 +1,25 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Contributte\PdfResponse;
 
-/**
- * @author Petr Parolek <petr.parolek@webnazakazku.cz>
- */
 class PdfResponseFactory
 {
-    /** @var array */
-    public $mpdfConfig;
 
-    public function __construct(array $mpdfConfig)
-    {
-        $this->mpdfConfig = $mpdfConfig;
-    }
+	/** @var array */
+	public $mpdfConfig;
 
-    public function createResponse(): PdfResponse
-    {
-        $response = new PdfResponse();
+	public function __construct(array $mpdfConfig)
+	{
+		$this->mpdfConfig = $mpdfConfig;
+	}
 
-        $response->mpdfConfig = $this->mpdfConfig;
+	public function createResponse(): PdfResponse
+	{
+		$response = new PdfResponse();
 
-        return $response;
-    }
+		$response->mpdfConfig = $this->mpdfConfig;
+
+		return $response;
+	}
+
 }

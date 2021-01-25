@@ -1,8 +1,10 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\PdfResponse;
 
-class MissingServiceException extends \LogicException
+use LogicException;
+
+class MissingServiceException extends LogicException
 {
 
 }
