@@ -1,8 +1,10 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\PdfResponse;
 
-class InvalidStateException extends \LogicException
+use LogicException;
+
+class InvalidStateException extends LogicException
 {
 
 }

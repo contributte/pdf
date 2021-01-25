@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 use Nette\DI\Compiler;
 use Tester\Assert;
@@ -6,25 +6,27 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 test(
-    function () {
-        $author = 'Jan Novák';
-        $mpdfTmpDir = 'tmp/mpdf';
+	function () {
+		$author = 'Jan Novák';
+		$mpdfTmpDir = 'tmp/mpdf';
 
-        $config = "
+		$config = sprintf('
             parameters:
                 mpdfConfig:
-                    tempDir: $mpdfTmpDir
-                    author: $author
+                    tempDir: %s
+                    author: %s
+        ', $mpdfTmpDir, $author);
 
+		$config .= '
             services:
                 - Contributte\PdfResponse\PdfResponseFactory(%mpdfConfig%)
-        ";
+                ';
 
-        $container = createContainer(new Compiler, $config);
+		$container = createContainer(new Compiler(), $config);
 
-        /** @var Contributte\PdfResponse\PdfResponseFactory $instance */
-        $factoryInstance = $container->getByType(Contributte\PdfResponse\PdfResponseFactory::class);
-        Assert::same($author, $factoryInstance->mpdfConfig['author']);
-        Assert::same($mpdfTmpDir, $factoryInstance->mpdfConfig['tempDir']);
-    }
+		/** @var Contributte\PdfResponse\PdfResponseFactory $factoryInstance */
+		$factoryInstance = $container->getByType(Contributte\PdfResponse\PdfResponseFactory::class);
+		Assert::same($author, $factoryInstance->mpdfConfig['author']);
+		Assert::same($mpdfTmpDir, $factoryInstance->mpdfConfig['tempDir']);
+	}
 );

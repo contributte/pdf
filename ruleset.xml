@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<ruleset>
+	<!-- Contributte Coding Standard -->
+	<rule ref="./vendor/ninjify/coding-standard/contributte.xml"/>
+
+	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
+		<properties>
+			<property name="rootNamespaces" type="array">
+				<element key="src" value="Contributte\PdfResponse"/>
+			</property>
+		</properties>
+
+		<exclude name="Generic.NamingConventions.CamelCapsFunctionName.ScopeNotCamelCaps" />
+		<exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace" />
+		<exclude name="PSR1.Classes.ClassDeclaration.MultipleClasses" />
+		<exclude name="SlevomatCodingStandard.Commenting.ForbiddenAnnotations.AnnotationForbidden" />
+		<exclude name="SlevomatCodingStandard.Files.TypeNameMatchesFileName.NoMatchBetweenTypeNameAndFileName" />
+		<exclude name="Squiz.Classes.ClassFileName.NoMatch" />
+
+	</rule>
+
+	<!--Exclude folders -->
+	<exclude-pattern>/tests/tmp</exclude-pattern>
+
+</ruleset>
