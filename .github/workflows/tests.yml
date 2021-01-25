@@ -21,7 +21,6 @@ jobs:
                   coverage: none
 
             - run: mkdir -p tests/tmp
-            - run: cat $(php -r 'echo php_ini_loaded_file() . " " . str_replace("\n", " ", str_replace(",", "", php_ini_scanned_files()));') > tests/tmp/php.ino
             - run: composer install --no-interaction --prefer-source
             - run: vendor/bin/tester tests -s -C
             - if: failure()
@@ -42,7 +41,6 @@ jobs:
                   coverage: none
 
             - run: mkdir -p tests/tmp
-            - run: cat $(php -r 'echo php_ini_loaded_file() . " " . str_replace("\n", " ", str_replace(",", "", php_ini_scanned_files()));') > tests/tmp/php.ino
             - run: composer update --no-interaction --prefer-dist --prefer-lowest --prefer-stable
             - run: vendor/bin/tester tests -s -C
 
@@ -59,8 +57,7 @@ jobs:
                   coverage: none
 
             - run: mkdir -p tests/tmp
-            - run: cat $(php -r 'echo php_ini_loaded_file() . " " . str_replace("\n", " ", str_replace(",", "", php_ini_scanned_files()));') > tests/tmp/php.ino
             - run: composer install --no-progress --prefer-dist
             - run: wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
-            - run: vendor/bin/tester -p phpdbg tests -s -c tests/tmp/php.ino --coverage ./coverage.xml --coverage-src ./src
+            - run: vendor/bin/tester -p phpdbg tests -s -C -d memory_limit=512M --coverage ./coverage.xml --coverage-src ./src
             - run: php coveralls.phar --verbose --config tests/.coveralls.yml
