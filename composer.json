@@ -27,12 +27,12 @@
         "mpdf/mpdf": "^8.0"
     },
     "require-dev": {
-        "latte/latte": "~2.5",
+        "latte/latte": "~2.7",
         "nette/application": "~3.0",
         "nette/di": "^3.0",
-        "nette/tester": "~2.2",
-        "symfony/css-selector": "~2.5",
-        "symfony/dom-crawler": "~2.5"
+        "nette/tester": "~2.3.1",
+        "symfony/css-selector": "~4.4.0",
+        "symfony/dom-crawler": "~4.4.0"
     },
     "extra": {
         "branch-alias": {
