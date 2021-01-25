@@ -517,9 +517,9 @@ class PdfResponse implements Nette\Application\IResponse
                     "Class 'Symfony\\Component\\DomCrawler\\Crawler' not found. Try composer-require 'symfony/dom-crawler'."
                 );
             }
-            if (!class_exists('Symfony\Component\CssSelector\CssSelector')) {
+            if (!class_exists(\Symfony\Component\CssSelector\CssSelectorConverter::class)) {
                 throw new MissingServiceException(
-                    "Class 'Symfony\\Component\\CssSelector\\CssSelector' not found. Try composer-require 'symfony/css-selector'."
+                    "Class 'Symfony\\Component\\CssSelector\\CssSelectorConverter' not found. Try composer-require 'symfony/css-selector'."
                 );
             }
         }
