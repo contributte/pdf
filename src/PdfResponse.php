@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Contributte\PdfResponse;
 
+use DOMElement;
 use Mpdf\HTMLParserMode;
 use Mpdf\Mpdf;
 use Mpdf\MpdfException;
@@ -81,7 +82,7 @@ class PdfResponse implements Nette\Application\IResponse
     /** @var array onBeforeComplete event */
     public $onBeforeComplete = array();
 
-    /** Additional stylesheet as a html string */
+	/** @var string Additional stylesheet as a html string */
     public $styles = "";
 
     /** @var string */
@@ -114,7 +115,7 @@ class PdfResponse implements Nette\Application\IResponse
     /** @var string ORIENTATION_PORTRAIT or ORIENTATION_LANDSCAPE */
     private $pageOrientation = self::ORIENTATION_PORTRAIT;
 
-    /** @var string see second parameter ($format) at https://mpdf.github.io/reference/mpdf-functions/mpdf.html */
+    /** @var string|array see second parameter ($format) at https://mpdf.github.io/reference/mpdf-functions/mpdf.html */
     private $pageFormat = "A4";
 
     /** @var string margins: top, right, bottom, left, header, footer */
@@ -132,7 +133,7 @@ class PdfResponse implements Nette\Application\IResponse
      * @param Template|string $source
      * @throws InvalidArgumentException
      */
-    public function setTemplate($source)
+    public function setTemplate($source): self
     {
         if (!($source instanceof Template) && !is_string($source)) {
             throw new InvalidArgumentException(
@@ -213,7 +214,7 @@ class PdfResponse implements Nette\Application\IResponse
      */
     public function getDisplayLayout(): string
     {
-        return (string) $this->displayLayout;
+        return $this->displayLayout;
     }
 
 
@@ -319,7 +320,7 @@ class PdfResponse implements Nette\Application\IResponse
      */
     public function setPageOrientation(string $pageOrientation): void
     {
-        if ($this->mPDF) {
+        if ($this->mPDF !== null) {
             throw new InvalidStateException('mPDF instance already created. Set page orientation before calling getMPDF');
         }
         if (!in_array($pageOrientation, array(self::ORIENTATION_PORTRAIT, self::ORIENTATION_LANDSCAPE), true)) {
@@ -344,7 +345,7 @@ class PdfResponse implements Nette\Application\IResponse
      */
     public function setPageFormat($pageFormat): void
     {
-        if ($this->mPDF) {
+		if ($this->mPDF !== null) {
             throw new InvalidStateException('mPDF instance already created. Set page format before calling getMPDF');
         }
         $this->pageFormat = $pageFormat;
@@ -386,7 +387,7 @@ class PdfResponse implements Nette\Application\IResponse
      */
     public function setPageMargins(string $pageMargins): void
     {
-        if ($this->mPDF) {
+        if ($this->mPDF !== null) {
             throw new InvalidStateException('mPDF instance already created. Set page margins before calling getMPDF');
         }
 
@@ -426,7 +427,7 @@ class PdfResponse implements Nette\Application\IResponse
         $pagecount = $mpdf->setSourceFile($this->backgroundTemplate);
         for ($i = 1; $i <= $pagecount; $i++) {
             $tplId = $mpdf->importPage($i);
-            $mpdf->UseTemplate($tplId);
+            $mpdf->useTemplate($tplId);
 
             if ($i < $pagecount) {
                 $mpdf->AddPage();
@@ -455,7 +456,7 @@ class PdfResponse implements Nette\Application\IResponse
             'orientation' => $this->pageOrientation
         ];
 
-        return $this->mpdfConfig ? $this->mpdfConfig + $mpdfConfig : $mpdfConfig;
+        return count($this->mpdfConfig) > 0 ? $this->mpdfConfig + $mpdfConfig : $mpdfConfig;
     }
 
 
@@ -508,7 +509,7 @@ class PdfResponse implements Nette\Application\IResponse
      */
     private function build(): Mpdf
     {
-        if (empty($this->documentTitle)) {
+        if ($this->documentTitle === '') {
             throw new InvalidStateException("Var 'documentTitle' cannot be empty.");
         }
         if ($this->ignoreStylesInHTMLDocument) {
@@ -524,7 +525,7 @@ class PdfResponse implements Nette\Application\IResponse
             }
         }
 
-        if ($this->generatedFile) { // singleton
+        if ($this->generatedFile instanceof Mpdf) { // singleton
             return $this->generatedFile;
         }
 
@@ -540,7 +541,7 @@ class PdfResponse implements Nette\Application\IResponse
         }
 
         // Fix: $html can't be empty (mPDF generates Fatal error)
-        if (empty($html)) {
+        if ($html === '') {
             $html = '<html lang=""><body></body></html>';
         }
 
@@ -550,7 +551,7 @@ class PdfResponse implements Nette\Application\IResponse
 
         $mpdf->author = $author;
 
-        if($this->mpdfConfig) {
+        if(count($this->mpdfConfig) > 0) {
             foreach ($this->mpdfConfig as $key => $value) {
                 $mpdf->$key = $value;
             }
@@ -560,14 +561,20 @@ class PdfResponse implements Nette\Application\IResponse
         $mpdf->SetDisplayMode($this->displayZoom, $this->displayLayout);
 
         // Add styles
-        if (!empty($this->styles)) {
+        if ($this->styles !== '') {
             $mpdf->WriteHTML($this->styles, HTMLParserMode::HEADER_CSS);
         }
 
         // copied from mPDF -> removes comments
         $html = preg_replace('/<!--mpdf/i', '', $html);
-        $html = preg_replace('/mpdf-->/i', '', $html);
-        $html = preg_replace('/<\!\-\-.*?\-\->/s', '', $html);
+
+        if ($html !== null) {
+			$html = preg_replace('/mpdf-->/i', '', $html);
+		}
+
+		if ($html !== null) {
+			$html = preg_replace('/<\!\-\-.*?\-\->/s', '', $html);
+		}
 
         // @see: https://mpdf.github.io/reference/mpdf-functions/writehtml.html
         if ($this->ignoreStylesInHTMLDocument) {
@@ -575,7 +582,10 @@ class PdfResponse implements Nette\Application\IResponse
 
             $crawler = new Crawler($html);
             foreach ($crawler->filter('style') as $child) {
-                $child->parentNode->removeChild($child);
+				/** @var DOMElement $child */
+				$parentNode = $child->parentNode;
+				/** @var DOMElement $parentNode */
+				$parentNode->removeChild($child);
             }
             $html = $crawler->html();
 
@@ -585,6 +595,7 @@ class PdfResponse implements Nette\Application\IResponse
         }
 
         // Add content
+		/** @var string $html */
         $mpdf->WriteHTML($html, $mode);
 
         $mpdf->page = count($mpdf->pages); //set pointer to last page to force render of all pages
@@ -625,7 +636,7 @@ class PdfResponse implements Nette\Application\IResponse
     public function save(string $dir, ?string $filename = null): string
     {
         $content = $this->toString();
-        $filename = Strings::lower($filename ?: $this->documentTitle);
+        $filename = Strings::lower($filename ?? $this->documentTitle);
 
         if (Strings::endsWith($filename, ".pdf")) {
             $filename = substr($filename, 0, -4);
