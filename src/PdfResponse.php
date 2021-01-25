@@ -14,6 +14,7 @@ use Nette\Http\IRequest;
 use Nette\Http\IResponse;
 use Nette\Utils\Strings;
 use setasign\Fpdi\PdfParser\PdfParserException as PdfParserExceptionAlias;
+use Symfony\Component\CssSelector\CssSelectorConverter;
 use Symfony\Component\DomCrawler\Crawler;
 use Throwable;
 
@@ -522,9 +523,9 @@ class PdfResponse implements Nette\Application\IResponse
 				);
 			}
 
-			if (!class_exists('Symfony\Component\CssSelector\CssSelector')) {
+			if (!class_exists(CssSelectorConverter::class)) {
 				throw new MissingServiceException(
-					"Class 'Symfony\\Component\\CssSelector\\CssSelector' not found. Try composer-require 'symfony/css-selector'."
+					"Class 'Symfony\\Component\\CssSelector\\CssSelectorConverter' not found. Try composer-require 'symfony/css-selector'."
 				);
 			}
 		}

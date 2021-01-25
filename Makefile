@@ -18,7 +18,9 @@ tests:
 	vendor/bin/tester tests -s -C
 
 coverage-clover:
-	vendor/bin/tester -s -p phpdbg --colors 1 -C --coverage ./coverage.xml --coverage-src ./src tests/cases
+	mkdir -p ./tests/tmp
+	vendor/bin/tester -s -p phpdbg --colors 1 -C --coverage ./tests/tmp/coverage.xml --coverage-src ./src tests
 
 coverage-html:
-	vendor/bin/tester -s -p phpdbg --colors 1 -C --coverage ./coverage.html --coverage-src ./src tests/cases
+	mkdir -p ./tests/tmp
+	vendor/bin/tester -s -p phpdbg --colors 1 -C --coverage ./tests/tmp/coverage.html --coverage-src ./src tests
