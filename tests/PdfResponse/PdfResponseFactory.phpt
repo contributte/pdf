@@ -1,5 +1,6 @@
 <?php declare(strict_types = 1);
 
+use Contributte\PdfResponse\PdfResponseFactory;
 use Nette\DI\Compiler;
 use Tester\Assert;
 
@@ -23,8 +24,8 @@ test(
 
 		$container = createContainer(new Compiler(), $config);
 
-		/** @var Contributte\PdfResponse\PdfResponseFactory $factoryInstance */
-		$factoryInstance = $container->getByType(Contributte\PdfResponse\PdfResponseFactory::class);
+		/** @var PdfResponseFactory $factoryInstance */
+		$factoryInstance = $container->getByType(PdfResponseFactory::class);
 		Assert::same($author, $factoryInstance->mpdfConfig['author']);
 		Assert::same($mpdfTmpDir, $factoryInstance->mpdfConfig['tempDir']);
 	}

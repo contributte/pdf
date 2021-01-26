@@ -208,7 +208,7 @@ class PdfResponse implements Nette\Application\IResponse
 	 */
 	public function setDisplayZoom($displayZoom): void
 	{
-		if ($displayZoom <= 0 && !in_array($displayZoom, [
+		if ((!is_int($displayZoom) || $displayZoom <= 0) && !in_array($displayZoom, [
 				self::ZOOM_DEFAULT,
 				self::ZOOM_FULLPAGE,
 				self::ZOOM_FULLWIDTH,
@@ -229,12 +229,11 @@ class PdfResponse implements Nette\Application\IResponse
 	}
 
 	/**
-	 * @param string $displayLayout
 	 * @throws InvalidArgumentException
 	 */
 	public function setDisplayLayout(string $displayLayout): void
 	{
-		if ($displayLayout <= 0 && !in_array(
+		if (!in_array(
 			$displayLayout,
 			[
 					self::LAYOUT_DEFAULT,
@@ -604,7 +603,7 @@ class PdfResponse implements Nette\Application\IResponse
 		}
 
 		// Add content
-		$mpdf->WriteHTML($html, $mode);
+		$mpdf->WriteHTML((string) $html, $mode);
 
 		$mpdf->page = count($mpdf->pages); //set pointer to last page to force render of all pages
 		$this->onBeforeComplete($mpdf);
