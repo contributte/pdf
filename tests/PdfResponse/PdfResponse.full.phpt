@@ -5,7 +5,9 @@
  */
 
 use Contributte\PdfResponse\PdfResponse;
-use Nette\Http;
+use Nette\Http\Request;
+use Nette\Http\Response;
+use Nette\Http\UrlScript;
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
@@ -17,7 +19,7 @@ test(
 		$fileResponse->setSaveMode(PdfResponse::INLINE);
 
 		ob_start();
-		$fileResponse->send(new Http\Request(new Http\UrlScript()), new Http\Response());
+		$fileResponse->send(new Request(new UrlScript()), new Response());
 		$actualData = ob_get_clean();
 
 		Assert::match('#^%PDF-#i', $actualData);
