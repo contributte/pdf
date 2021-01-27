@@ -27,9 +27,9 @@
         "mpdf/mpdf": "^8.0"
     },
     "require-dev": {
-        "latte/latte": "~2.7",
+        "latte/latte": "~2.10.0",
         "nette/application": "~3.0.0",
-        "nette/di": "^3.0",
+        "nette/di": "^3.0.0",
         "ninjify/nunjuck": "^0.3.0",
         "ninjify/qa": "^0.12",
         "phpstan/phpstan": "^0.12",
