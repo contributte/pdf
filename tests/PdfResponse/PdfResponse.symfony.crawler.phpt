@@ -12,17 +12,15 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-test(
-	function (): void {
-		$origData = file_get_contents(__DIR__ . '/templates/example2.htm');
-		$fileResponse = new PdfResponse($origData);
-		$fileResponse->setSaveMode(PdfResponse::INLINE);
-		$fileResponse->ignoreStylesInHTMLDocument = true;
+test(function (): void {
+	$origData = file_get_contents(__DIR__ . '/templates/example2.htm');
+	$fileResponse = new PdfResponse($origData);
+	$fileResponse->setSaveMode(PdfResponse::INLINE);
+	$fileResponse->ignoreStylesInHTMLDocument = true;
 
-		ob_start();
-		$fileResponse->send(new Request(new UrlScript()), new Response());
-		$actualData = ob_get_clean();
+	ob_start();
+	$fileResponse->send(new Request(new UrlScript()), new Response());
+	$actualData = ob_get_clean();
 
-		Assert::match('#^%PDF-#i', $actualData);
-	}
-);
+	Assert::match('#^%PDF-#i', $actualData);
+});
