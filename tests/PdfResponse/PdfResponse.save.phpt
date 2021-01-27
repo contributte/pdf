@@ -10,7 +10,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 test(
-	function () {
+	function (): void {
 		$origData = file_get_contents(__DIR__ . '/templates/example1.htm');
 		$fileResponse = new PdfResponse($origData);
 		$fileResponse->setSaveMode(PdfResponse::DOWNLOAD);

@@ -89,10 +89,10 @@ class PdfResponse implements Nette\Application\IResponse
 
 	public const LAYOUT_DEFAULT = 'default'; // User’s default setting in Adobe Reader
 
-	/** @var array */
+	/** @var array<mixed> */
 	public $mpdfConfig = [];
 
-	/** @var array onBeforeComplete event */
+	/** @var array<mixed> onBeforeComplete event */
 	public $onBeforeComplete = [];
 
 	/** @var string Additional stylesheet as a html string */
@@ -128,7 +128,7 @@ class PdfResponse implements Nette\Application\IResponse
 	/** @var string ORIENTATION_PORTRAIT or ORIENTATION_LANDSCAPE */
 	private $pageOrientation = self::ORIENTATION_PORTRAIT;
 
-	/** @var string|array see second parameter ($format) at https://mpdf.github.io/reference/mpdf-functions/mpdf.html */
+	/** @var string|array<mixed> see second parameter ($format) at https://mpdf.github.io/reference/mpdf-functions/mpdf.html */
 	private $pageFormat = 'A4';
 
 	/** @var string margins: top, right, bottom, left, header, footer */
@@ -163,33 +163,21 @@ class PdfResponse implements Nette\Application\IResponse
 		return $this;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getDocumentAuthor(): string
 	{
 		return $this->documentAuthor;
 	}
 
-	/**
-	 * @param string $documentAuthor
-	 */
 	public function setDocumentAuthor(string $documentAuthor): void
 	{
 		$this->documentAuthor = $documentAuthor;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getDocumentTitle(): string
 	{
 		return $this->documentTitle;
 	}
 
-	/**
-	 * @param string $documentTitle
-	 */
 	public function setDocumentTitle(string $documentTitle): void
 	{
 		$this->documentTitle = $documentTitle;
@@ -220,9 +208,6 @@ class PdfResponse implements Nette\Application\IResponse
 		$this->displayZoom = $displayZoom;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getDisplayLayout(): string
 	{
 		return $this->displayLayout;
@@ -252,41 +237,26 @@ class PdfResponse implements Nette\Application\IResponse
 		$this->displayLayout = $displayLayout;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isMultiLanguage(): bool
 	{
 		return $this->multiLanguage;
 	}
 
-	/**
-	 * @param bool $multiLanguage
-	 */
 	public function setMultiLanguage(bool $multiLanguage): void
 	{
 		$this->multiLanguage = $multiLanguage;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isIgnoreStylesInHTMLDocument(): bool
 	{
 		return $this->ignoreStylesInHTMLDocument;
 	}
 
-	/**
-	 * @param bool $ignoreStylesInHTMLDocument
-	 */
 	public function setIgnoreStylesInHTMLDocument(bool $ignoreStylesInHTMLDocument): void
 	{
 		$this->ignoreStylesInHTMLDocument = $ignoreStylesInHTMLDocument;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getSaveMode(): string
 	{
 		return $this->saveMode;
@@ -296,7 +266,6 @@ class PdfResponse implements Nette\Application\IResponse
 	 * To force download, use PdfResponse::DOWNLOAD
 	 * To show pdf in browser, use PdfResponse::INLINE
 	 *
-	 * @param string $saveMode
 	 * @throws InvalidArgumentException
 	 */
 	public function setSaveMode(string $saveMode): void
@@ -308,16 +277,12 @@ class PdfResponse implements Nette\Application\IResponse
 		$this->saveMode = $saveMode;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getPageOrientation(): string
 	{
 		return $this->pageOrientation;
 	}
 
 	/**
-	 * @param string $pageOrientation
 	 * @throws InvalidStateException
 	 * @throws InvalidArgumentException
 	 */
@@ -335,7 +300,7 @@ class PdfResponse implements Nette\Application\IResponse
 	}
 
 	/**
-	 * @return string|array
+	 * @return string|array<mixed>
 	 */
 	public function getPageFormat()
 	{
@@ -343,7 +308,7 @@ class PdfResponse implements Nette\Application\IResponse
 	}
 
 	/**
-	 * @param string|array $pageFormat
+	 * @param string|array<mixed> $pageFormat
 	 * @throws InvalidStateException
 	 */
 	public function setPageFormat($pageFormat): void
@@ -355,9 +320,6 @@ class PdfResponse implements Nette\Application\IResponse
 		$this->pageFormat = $pageFormat;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getPageMargins(): string
 	{
 		return $this->pageMargins;
@@ -366,7 +328,7 @@ class PdfResponse implements Nette\Application\IResponse
 	/**
 	 * Gets margins as array
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function getMargins(): array
 	{
@@ -383,7 +345,6 @@ class PdfResponse implements Nette\Application\IResponse
 	}
 
 	/**
-	 * @param string $pageMargins
 	 * @throws InvalidStateException
 	 * @throws InvalidArgumentException
 	 */
@@ -412,7 +373,6 @@ class PdfResponse implements Nette\Application\IResponse
 	 * WARNING: internally creates mPDF instance, setting some properties after calling this method
 	 * may cause an Exception
 	 *
-	 * @param string $pathToBackgroundTemplate
 	 * @throws FileNotFoundException
 	 * @throws PdfParserExceptionAlias
 	 */
@@ -431,9 +391,11 @@ class PdfResponse implements Nette\Application\IResponse
 			$tplId = $mpdf->importPage($i);
 			$mpdf->useTemplate($tplId);
 
-			if ($i < $pagecount) {
-				$mpdf->AddPage();
+			if ($i >= $pagecount) {
+				continue;
 			}
+
+			$mpdf->AddPage();
 		}
 
 		$mpdf->page = 1;
@@ -462,7 +424,6 @@ class PdfResponse implements Nette\Application\IResponse
 	}
 
 	/**
-	 * @return Mpdf
 	 * @throws InvalidStateException
 	 */
 	public function getMPDF(): Mpdf
@@ -494,9 +455,11 @@ class PdfResponse implements Nette\Application\IResponse
 	 */
 	public function __construct($source = null)
 	{
-		if ($source !== null) {
-			$this->setTemplate($source);
+		if ($source === null) {
+			return;
 		}
+
+		$this->setTemplate($source);
 	}
 
 
@@ -507,7 +470,6 @@ class PdfResponse implements Nette\Application\IResponse
 	/**
 	 * Builds final pdf
 	 *
-	 * @return Mpdf
 	 * @throws InvalidStateException
 	 * @throws MissingServiceException
 	 * @throws MpdfException
@@ -620,9 +582,6 @@ class PdfResponse implements Nette\Application\IResponse
 	/**
 	 * Sends response to output
 	 *
-	 * @param IRequest  $httpRequest
-	 * @param IResponse $httpResponse
-	 * @return void
 	 * @throws MpdfException
 	 */
 	public function send(IRequest $httpRequest, IResponse $httpResponse): void
@@ -636,8 +595,6 @@ class PdfResponse implements Nette\Application\IResponse
 	 * Note: $name overrides property $documentTitle
 	 *
 	 * @param string      $dir path to directory
-	 * @param string|null $filename
-	 * @return string
 	 * @throws MpdfException
 	 */
 	public function save(string $dir, ?string $filename = null): string
@@ -658,7 +615,6 @@ class PdfResponse implements Nette\Application\IResponse
 	}
 
 	/**
-	 * @return string
 	 * @throws MpdfException
 	 */
 	public function toString(): string
@@ -669,8 +625,6 @@ class PdfResponse implements Nette\Application\IResponse
 
 	/**
 	 * Return generated PDF as a string
-	 *
-	 * @return string
 	 */
 	public function __toString(): string
 	{

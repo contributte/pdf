@@ -17,30 +17,6 @@ define('TEMP_DIR', __DIR__ . '/tmp/' . getenv(Tester\Environment::THREAD));
 @mkdir(dirname(TEMP_DIR)); // @ - directory may already exist
 Tester\Helpers::purge(TEMP_DIR);
 
-function test(Closure $function)
-{
-	$function();
-}
-
-class Notes
-{
-
-	public static $notes = [];
-
-	public static function add($message)
-	{
-		self::$notes[] = $message;
-	}
-
-	public static function fetch()
-	{
-		$res = self::$notes;
-		self::$notes = [];
-		return $res;
-	}
-
-}
-
 function getTempDir(): string
 {
 	$dir = __DIR__ . '/tmp/' . getenv(Tester\Environment::THREAD);
@@ -61,7 +37,10 @@ function getTempDir(): string
 	return $dir;
 }
 
-function createContainer($source, $config = null, $params = []): ?Nette\DI\Container
+/**
+ * @param array<mixed> $params
+ */
+function createContainer(Nette\DI\Compiler $source, ?string $config = null, array $params = []): ?Nette\DI\Container
 {
 	$class = 'Container' . md5((string) lcg_value());
 	if ($source instanceof Nette\DI\ContainerBuilder) {

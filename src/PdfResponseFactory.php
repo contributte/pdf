@@ -5,9 +5,10 @@ namespace Contributte\PdfResponse;
 class PdfResponseFactory
 {
 
-	/** @var array */
+	/** @var array<mixed> */
 	public $mpdfConfig;
 
+	/** @param array<mixed> $mpdfConfig */
 	public function __construct(array $mpdfConfig)
 	{
 		$this->mpdfConfig = $mpdfConfig;
