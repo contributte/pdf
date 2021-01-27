@@ -7,7 +7,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 test(
-	function () {
+	function (): void {
 		$author = 'Jan Novák';
 		$mpdfTmpDir = 'tmp/mpdf';
 

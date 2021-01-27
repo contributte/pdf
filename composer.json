@@ -23,7 +23,7 @@
         }
     ],
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.1",
         "mpdf/mpdf": "^8.0"
     },
     "require-dev": {
@@ -31,7 +31,7 @@
         "nette/application": "~3.0.0",
         "nette/di": "^3.0",
         "ninjify/nunjuck": "^0.3.0",
-        "ninjify/qa": "^0.12.1",
+        "ninjify/qa": "^0.12",
         "phpstan/phpstan": "^0.12",
         "phpstan/phpstan-deprecation-rules": "^0.12",
         "phpstan/phpstan-nette": "^0.12",

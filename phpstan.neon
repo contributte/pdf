@@ -9,4 +9,3 @@ parameters:
     ignoreErrors:
         - '#Variable property access on Mpdf\\Mpdf#'
     treatPhpDocTypesAsCertain: false
-    checkMissingIterableValueType: false

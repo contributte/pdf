@@ -17,7 +17,7 @@ require __DIR__ . '/../bootstrap.php';
 $origData = file_get_contents(__DIR__ . '/templates/example1.htm');
 
 test(
-	function () use ($origData) {
+	function () use ($origData): void {
 		$fileResponse = new PdfResponse($origData);
 		$fileResponse->setSaveMode(PdfResponse::INLINE);
 		$fileResponse->pageOrientation = PdfResponse::ORIENTATION_LANDSCAPE;
@@ -33,12 +33,12 @@ test(
 );
 
 test(
-	function () use ($origData) {
+	function () use ($origData): void {
 		$fileResponse = new PdfResponse($origData);
 		$fileResponse->getMPDF();
 
 		Assert::exception(
-			function () use ($fileResponse) {
+			function () use ($fileResponse): void {
 				$fileResponse->pageOrientation = PdfResponse::ORIENTATION_LANDSCAPE;
 			},
 			InvalidStateException::class,
@@ -48,12 +48,12 @@ test(
 );
 
 test(
-	function () use ($origData) {
+	function () use ($origData): void {
 		$fileResponse = new PdfResponse($origData);
 		$fileResponse->getMPDF();
 
 		Assert::exception(
-			function () use ($fileResponse) {
+			function () use ($fileResponse): void {
 				$fileResponse->pageFormat = 'A4-L';
 			},
 			InvalidStateException::class,
@@ -63,12 +63,12 @@ test(
 );
 
 test(
-	function () use ($origData) {
+	function () use ($origData): void {
 		$fileResponse = new PdfResponse($origData);
 		$fileResponse->getMPDF();
 
 		Assert::exception(
-			function () use ($fileResponse) {
+			function () use ($fileResponse): void {
 				$fileResponse->pageMargins = $fileResponse->getPageMargins();
 			},
 			InvalidStateException::class,
