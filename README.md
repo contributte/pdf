@@ -20,10 +20,10 @@ Website ðŸš€ <a href="https://contributte.org">contributte.org</a> | Contact ðŸ‘
 
 ## Usage
 
-To install latest version of `contributte/pdf` use [Composer](https://getcomposer.com).
+To install latest version of `contributte/pdf` use [Composer](https://getcomposer.org/).
 
 ```
-composer require contributte/pdf
+$ composer require contributte/pdf
 ```
 
 ## Documentation
@@ -40,7 +40,7 @@ For details on how to use this package, check out our [documentation](.docs).
 
 ## Development
 
-See [how to contribute](https://contributte.org) to this package. This package is currently maintained by these authors.
+See [how to contribute](https://contributte.org/contributing.html) to this package. This package is currently maintained by these authors.
 
 <a href="https://github.com/f3l1x">
     <img width="80" height="80" src="https://avatars2.githubusercontent.com/u/538058?v=3&s=80">
@@ -51,5 +51,5 @@ See [how to contribute](https://contributte.org) to this package. This package i
 
 -----
 
-Consider to [support](https://contributte.com/partners) **contributte** development team.
+Consider to [support](https://contributte.org/partners.html) **contributte** development team.
 Also thank you for using this package. Thanks.
