@@ -24,11 +24,12 @@
     ],
     "require": {
         "php": ">=7.1",
-        "mpdf/mpdf": "^8.0"
+        "mpdf/mpdf": "^8.0",
+        "nette/application": "~3.0",
+        "nette/http": "~3.0"
     },
     "require-dev": {
-        "latte/latte": "~2.10.0",
-        "nette/application": "~3.0.0",
+        "latte/latte": "^2.10",
         "nette/di": "^3.0.0",
         "ninjify/nunjuck": "^0.3.0",
         "ninjify/qa": "^0.12",
@@ -36,8 +37,8 @@
         "phpstan/phpstan-deprecation-rules": "^0.12",
         "phpstan/phpstan-nette": "^0.12",
         "phpstan/phpstan-strict-rules": "^0.12",
-        "symfony/css-selector": "~4.4.0",
-        "symfony/dom-crawler": "~4.4.0"
+        "symfony/css-selector": "^4.4|^5.0",
+        "symfony/dom-crawler": "^4.4|^5.0"
     },
     "extra": {
         "branch-alias": {
