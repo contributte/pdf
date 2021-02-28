@@ -35,8 +35,8 @@ For details on how to use this package, check out our [documentation](.docs).
 
 | State       | Version     | Branch   | PHP      |
 |-------------|-------------|----------|----------|
-| dev         | `6.0.x-dev` | `master` | `^7.1`   |
-| stable      | `^6.0`      | `master` | `^7.1`   |
+| dev         | `6.1.x-dev` | `master` | `^7.1`   |
+| stable      | `^6.1`      | `master` | `^7.1`   |
 
 ## Development
 
