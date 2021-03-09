@@ -22,8 +22,8 @@ Website ðŸš€ <a href="https://contributte.org">contributte.org</a> | Contact ðŸ‘
 
 To install latest version of `contributte/pdf` use [Composer](https://getcomposer.org/).
 
-```
-$ composer require contributte/pdf
+```bash
+composer require contributte/pdf
 ```
 
 ## Documentation
