@@ -143,7 +143,7 @@ public function actionPdf()
 
 ### Configuration of custom temp dir for mPDF in PdfResponse
 
-```yml
+```yaml
 services:
     -
         factory: Contributte\PdfResponse\PdfResponse
