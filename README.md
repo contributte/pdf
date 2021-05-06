@@ -52,4 +52,4 @@ See [how to contribute](https://contributte.org/contributing.html) to this packa
 -----
 
 Consider to [support](https://contributte.org/partners.html) **contributte** development team.
-Also thank you for using this package. Thanks.
+Also thank you for using this package.
