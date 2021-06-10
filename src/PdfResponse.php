@@ -443,6 +443,11 @@ class PdfResponse implements Nette\Application\IResponse
 		return $this->mPDF;
 	}
 
+	public function setMPDF(Mpdf $mPDF): self
+	{
+		$this->mPDF = $mPDF;
+		return $this;
+	}
 
 
 	/********************************************************************************
