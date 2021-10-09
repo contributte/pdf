@@ -151,6 +151,31 @@ services:
 			- $mpdfConfig([tempDir: %tempDir%/mpdf])
 ```
 
+and in your PHP code:
+
+```php
+/**
+ * @var \Contributte\PdfResponse\PdfResponse
+ */
+public $pdfResponse;
+
+public function __construct(\Contributte\PdfResponse\PdfResponse $pdfResponse)
+{
+	$this->pdfResponse = $pdfResponse;
+}
+
+public function actionPdf()
+{
+	$template = $this->createTemplate();
+	$template->setFile(__DIR__ . "/path/to/template.latte");
+		
+	$this->pdfResponse->setTemplate($template);
+
+	$this->pdfResponse->setSaveMode(PdfResponse::INLINE);
+	$this->sendResponse($this->pdfResponse);
+}
+
+```
 
 See also
 ---
