@@ -176,15 +176,3 @@ public function actionPdf()
 }
 
 ```
-
-See also
----
-
-- [Nette forum](https://forum.nette.org/cs/3726-addon-pdfresponse-pdfresponse) (czech)
-- [Componette](https://componette.com/joseki/pdfresponse/)
-
-
-
------
-
-Thanks for testing, reporting and contributing.
