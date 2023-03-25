@@ -45,9 +45,6 @@ See [how to contribute](https://contributte.org/contributing.html) to this packa
 <a href="https://github.com/f3l1x">
     <img width="80" height="80" src="https://avatars2.githubusercontent.com/u/538058?v=3&s=80">
 </a>
-<a href="https://github.com/petrparolek">
-    <img width="80" height="80" src="https://avatars0.githubusercontent.com/u/6066243?s=150&v=4">
-</a>
 
 -----
 
