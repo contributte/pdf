@@ -33,10 +33,10 @@ For details on how to use this package, check out our [documentation](.docs).
 
 ## Versions
 
-| State       | Version     | Branch   | PHP      |
-|-------------|-------------|----------|----------|
-| dev         | `6.1.x-dev` | `master` | `^7.1`   |
-| stable      | `^6.1`      | `master` | `^7.1`   |
+| State       | Version | Branch   | PHP    |
+|-------------|---------|----------|--------|
+| dev         | `^7.1`  | `master` | `8.1+` |
+| stable      | `^7.0`  | `master` | `8.1+` |
 
 ## Development
 

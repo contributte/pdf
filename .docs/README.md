@@ -17,6 +17,8 @@
 ### How to prepare PDF from template
 
 ```php
+use Contributte\PdfResponse\PdfResponse;
+
 // in a Presenter
 public function actionPdf()
 {
@@ -25,7 +27,7 @@ public function actionPdf()
 	$template->someValue = 123;
 	// Tip: In template to make a new page use <pagebreak>
 
-	$pdf = new \Contributte\PdfResponse\PdfResponse($template);
+	$pdf = new PdfResponse($template);
 
 	// optional
 	$pdf->documentTitle = date("Y-m-d") . " My super title"; // creates filename 2012-06-30-my-super-title.pdf
@@ -40,12 +42,14 @@ public function actionPdf()
 ### Save file to server
 
 ```php
+use Contributte\PdfResponse\PdfResponse;
+
 public function actionPdf()
 {
 	$template = $this->createTemplate();
 	$template->setFile(__DIR__ . "/path/to/template.latte");
 
-	$pdf = new \Contributte\PdfResponse\PdfResponse($template);
+	$pdf = new PdfResponse($template);
 
 	$pdf->save(__DIR__ . "/path/to/directory"); // as a filename $this->documentTitle will be used
 	$pdf->save(__DIR__ . "/path/to/directory", "filename"); // OR use a custom name
@@ -55,12 +59,14 @@ public function actionPdf()
 ### Attach file to an email
 
 ```php
+use Contributte\PdfResponse\PdfResponse;
+
 public function actionPdf()
 {
 	$template = $this->createTemplate();
 	$template->setFile(__DIR__ . "/path/to/template.latte");
 
-	$pdf = new \Contributte\PdfResponse\PdfResponse($template);
+	$pdf = new PdfResponse($template);
 
 	$savedFile = $pdf->save(__DIR__ . "/path/to/directory");
 	$mail = new Nette\Mail\Message;
@@ -74,12 +80,14 @@ public function actionPdf()
 ### Force file to download
 
 ```php
+use Contributte\PdfResponse\PdfResponse;
+
 public function actionPdf()
 {
 	$template = $this->createTemplate();
 	$template->setFile(__DIR__ . "/path/to/template.latte");
 
-	$pdf = new \Contributte\PdfResponse\PdfResponse($template);
+	$pdf = new PdfResponse($template);
 	$pdf->setSaveMode(PdfResponse::DOWNLOAD); //default behavior
 	$this->sendResponse($pdf);
 }
@@ -88,12 +96,14 @@ public function actionPdf()
 ### Force file to display in a browser
 
 ```php
+use Contributte\PdfResponse\PdfResponse;
+
 public function actionPdf()
 {
 	$template = $this->createTemplate();
 	$template->setFile(__DIR__ . "/path/to/template.latte");
 
-	$pdf = new \Contributte\PdfResponse\PdfResponse($template);
+	$pdf = new PdfResponse($template);
 	$pdf->setSaveMode(PdfResponse::INLINE);
 	$this->sendResponse($pdf);
 }
@@ -102,9 +112,11 @@ public function actionPdf()
 ### Set a pdf background easily
 
 ```php
+use Contributte\PdfResponse\PdfResponse;
+
 public function actionPdf()
 {
-	$pdf = new \Contributte\PdfResponse\PdfResponse('');
+	$pdf = new PdfResponse('');
 	$pdf->setBackgroundTemplate(__DIR__ . "/path/to/an/existing/file.pdf");
 
 	// to write into an existing document use the following statements
@@ -124,6 +136,8 @@ public function actionPdf()
 ### Create pdf with latte only
 
 ```php
+use Contributte\PdfResponse\PdfResponse;
+
 public function actionPdf()
 {
 	$latte = new Latte\Engine;
@@ -136,7 +150,7 @@ public function actionPdf()
 
 	$template = $latte->renderToString(__DIR__ . "/path/to/template.latte");
 
-	$pdf = new \Contributte\PdfResponse\PdfResponse($template);
+	$pdf = new PdfResponse($template);
 	$this->sendResponse($pdf);
 }
 ```
@@ -154,12 +168,11 @@ services:
 and in your PHP code:
 
 ```php
-/**
- * @var \Contributte\PdfResponse\PdfResponse
- */
-public $pdfResponse;
+use Contributte\PdfResponse\PdfResponse;
 
-public function __construct(\Contributte\PdfResponse\PdfResponse $pdfResponse)
+private PdfResponse $pdfResponse;
+
+public function __construct(PdfResponse $pdfResponse)
 {
 	$this->pdfResponse = $pdfResponse;
 }
@@ -168,11 +181,10 @@ public function actionPdf()
 {
 	$template = $this->createTemplate();
 	$template->setFile(__DIR__ . "/path/to/template.latte");
-		
+
 	$this->pdfResponse->setTemplate($template);
 
 	$this->pdfResponse->setSaveMode(PdfResponse::INLINE);
 	$this->sendResponse($this->pdfResponse);
 }
-
 ```
