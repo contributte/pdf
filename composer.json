@@ -39,13 +39,15 @@
     "nette/http": "^3.2.0"
   },
   "require-dev": {
-    "latte/latte": "^2.10",
-    "nette/di": "^3.0.0",
+    "nette/di": "^3.1.2",
     "contributte/qa": "^0.4",
     "contributte/tester": "^0.3",
     "contributte/phpstan": "^0.1",
-    "symfony/css-selector": "^4.4|^5.0",
-    "symfony/dom-crawler": "^4.4|^5.0"
+    "symfony/css-selector": "^6.3.0",
+    "symfony/dom-crawler": "^6.3.0"
+  },
+  "conflict": {
+    "masterminds/html5": "<2.8.0"
   },
   "suggest": {
     "symfony/dom-crawler": "Allows filtering html tags.",
