@@ -41,12 +41,9 @@
   "require-dev": {
     "latte/latte": "^2.10",
     "nette/di": "^3.0.0",
-    "ninjify/nunjuck": "^0.3.0",
-    "ninjify/qa": "^0.12",
-    "phpstan/phpstan": "^1.0",
-    "phpstan/phpstan-deprecation-rules": "^1.0",
-    "phpstan/phpstan-nette": "^1.0",
-    "phpstan/phpstan-strict-rules": "^1.0",
+    "contributte/qa": "^0.4",
+    "contributte/tester": "^0.3",
+    "contributte/phpstan": "^0.1",
     "symfony/css-selector": "^4.4|^5.0",
     "symfony/dom-crawler": "^4.4|^5.0"
   },
