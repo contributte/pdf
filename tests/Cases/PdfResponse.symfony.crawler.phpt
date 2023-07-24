@@ -1,10 +1,9 @@
 <?php declare(strict_types = 1);
 
-/**
- * Test: Contributte\PdfResponse\PdfResponse.
- */
+namespace Tests\Cases;
 
 use Contributte\PdfResponse\PdfResponse;
+use Contributte\Tester\Toolkit;
 use Nette\Http\Request;
 use Nette\Http\Response;
 use Nette\Http\UrlScript;
@@ -12,10 +11,11 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-test(function (): void {
-	$origData = file_get_contents(__DIR__ . '/templates/example1.htm');
+Toolkit::test(function (): void {
+	$origData = file_get_contents(__DIR__ . '/templates/example2.htm');
 	$fileResponse = new PdfResponse($origData);
 	$fileResponse->setSaveMode(PdfResponse::INLINE);
+	$fileResponse->ignoreStylesInHTMLDocument = true;
 
 	ob_start();
 	$fileResponse->send(new Request(new UrlScript()), new Response());

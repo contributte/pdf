@@ -1,16 +1,15 @@
 <?php declare(strict_types = 1);
 
-/**
- * Test: Contributte\PdfResponse\PdfResponse.
- */
+namespace Tests\Cases;
 
-use Contributte\PdfResponse\InvalidArgumentException;
+use Contributte\PdfResponse\Exceptions\InvalidArgumentException;
 use Contributte\PdfResponse\PdfResponse;
+use Contributte\Tester\Toolkit;
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-test(function (): void {
+Toolkit::test(function (): void {
 	$origData = file_get_contents(__DIR__ . '/templates/example1.htm');
 	$fileResponse = new PdfResponse($origData);
 
