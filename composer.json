@@ -34,7 +34,7 @@
   ],
   "require": {
     "php": ">=8.1",
-    "mpdf/mpdf": "^8.0",
+    "mpdf/mpdf": "^8.1.0",
     "nette/application": "^3.1.0",
     "nette/http": "^3.2.0"
   },
