@@ -16,9 +16,9 @@ $origData = file_get_contents(__DIR__ . '/templates/example1.htm');
 Toolkit::test(function () use ($origData): void {
 	$fileResponse = new PdfResponse($origData);
 	$fileResponse->setSaveMode(PdfResponse::INLINE);
-	$fileResponse->pageOrientation = PdfResponse::ORIENTATION_LANDSCAPE;
-	$fileResponse->pageFormat = 'A4-L';
-	$fileResponse->pageMargins = $fileResponse->getPageMargins();
+	$fileResponse->setPageOrientation(PdfResponse::ORIENTATION_LANDSCAPE);
+	$fileResponse->setPageFormat('A4-L');
+	$fileResponse->setPageMargins($fileResponse->getPageMargins());
 
 	ob_start();
 	$fileResponse->send(new Request(new UrlScript()), new Response());
@@ -38,11 +38,6 @@ Toolkit::test(function () use ($origData): void {
 		InvalidStateException::class,
 		'mPDF instance already created. Set page orientation before calling getMPDF'
 	);
-});
-
-Toolkit::test(function () use ($origData): void {
-	$fileResponse = new PdfResponse($origData);
-	$fileResponse->getMPDF();
 
 	Assert::exception(
 		function () use ($fileResponse): void {
@@ -51,11 +46,6 @@ Toolkit::test(function () use ($origData): void {
 		InvalidStateException::class,
 		'mPDF instance already created. Set page format before calling getMPDF'
 	);
-});
-
-Toolkit::test(function () use ($origData): void {
-	$fileResponse = new PdfResponse($origData);
-	$fileResponse->getMPDF();
 
 	Assert::exception(
 		function () use ($fileResponse): void {
