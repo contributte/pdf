@@ -6,7 +6,7 @@ class PdfResponseFactory
 {
 
 	/** @var array<mixed> */
-	public $mpdfConfig;
+	public array $mpdfConfig;
 
 	/** @param array<mixed> $mpdfConfig */
 	public function __construct(array $mpdfConfig)
