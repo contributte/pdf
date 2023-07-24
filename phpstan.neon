@@ -1,11 +1,21 @@
 includes:
-    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
-    - vendor/phpstan/phpstan-nette/extension.neon
-    - vendor/phpstan/phpstan-nette/rules.neon
-    - vendor/phpstan/phpstan-strict-rules/rules.neon
+	- vendor/contributte/phpstan/phpstan.neon
 
 parameters:
-    level: max
-    ignoreErrors:
-        - '#Variable property access on Mpdf\\Mpdf#'
-    treatPhpDocTypesAsCertain: false
+	level: 9
+	phpVersion: 80100
+
+	scanDirectories:
+		- src
+
+	fileExtensions:
+		- php
+
+	paths:
+		- src
+		- .docs
+
+	excludePaths:
+		- src/DI/SentryExtension24.php
+
+	ignoreErrors:
