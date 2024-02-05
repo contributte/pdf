@@ -159,10 +159,7 @@ public function actionPdf()
 
 ```neon
 services:
-	-
-		factory: Contributte\PdfResponse\PdfResponse
-		setup:
-			- $mpdfConfig([tempDir: %tempDir%/mpdf])
+	- Contributte\PdfResponse\PdfResponseFactory([tempDir: %tempDir%/pdf])
 ```
 
 and in your PHP code:
@@ -170,11 +167,10 @@ and in your PHP code:
 ```php
 use Contributte\PdfResponse\PdfResponse;
 
-private PdfResponse $pdfResponse;
-
-public function __construct(PdfResponse $pdfResponse)
+public function __construct(
+	private readonly PdfResponseFactory $pdfResponseFactory
+)
 {
-	$this->pdfResponse = $pdfResponse;
 }
 
 public function actionPdf()
@@ -182,9 +178,10 @@ public function actionPdf()
 	$template = $this->createTemplate();
 	$template->setFile(__DIR__ . "/path/to/template.latte");
 
-	$this->pdfResponse->setTemplate($template);
+	$response = $this->pdfResponseFactory->createResponse();
+	$response->setTemplate($template);
+	$response->setSaveMode(PdfResponse::INLINE);
 
-	$this->pdfResponse->setSaveMode(PdfResponse::INLINE);
-	$this->sendResponse($this->pdfResponse);
+	$this->sendResponse($response);
 }
 ```
