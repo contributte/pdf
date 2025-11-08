@@ -9,7 +9,7 @@
     "pdf"
   ],
   "type": "library",
-  "license": "LGPL-3.0",
+  "license": "MIT",
   "homepage": "https://github.com/contributte/pdf",
   "authors": [
     {
