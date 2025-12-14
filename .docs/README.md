@@ -10,6 +10,7 @@
     - [Force file to display in a browser](#force-file-to-display-in-a-browser)
     - [Set a pdf background easily](#set-a-pdf-background-easily)
     - [Create pdf with latte only](#create-pdf-with-latte-only)
+    - [Configuration of custom fonts for mPDF](#configuration-of-custom-fonts-for-mpdf)
     - [Configuration of custom temp dir for mPDF in PdfResponse](#configuration-of-custom-temp-dir-for-mpdf-in-pdfresponse)
 
 ## Usage
@@ -151,6 +152,32 @@ public function actionPdf()
 	$template = $latte->renderToString(__DIR__ . "/path/to/template.latte");
 
 	$pdf = new PdfResponse($template);
+	$this->sendResponse($pdf);
+}
+```
+
+### Configuration of custom fonts for mPDF
+
+```php
+use Contributte\PdfResponse\PdfResponse;
+
+public function actionPdf()
+{
+	$template = $this->createTemplate();
+	$template->setFile(__DIR__ . "/path/to/template.latte");
+
+	$pdf = new PdfResponse($template);
+	$pdf->mpdfConfig = [
+		'fontDir' => [__DIR__ . '/fonts'],
+		'fontdata' => [
+			'poppins' => [
+				'R' => 'Poppins-Regular.ttf',
+				'B' => 'Poppins-Bold.ttf',
+			],
+		],
+		'default_font' => 'poppins',
+	];
+
 	$this->sendResponse($pdf);
 }
 ```
