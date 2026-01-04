@@ -31,7 +31,7 @@ use Throwable;
  * @link       http://addons.nette.org/cs/pdfresponse2
  * @property string       $saveMode
  * @property string       $pageOrientation
- * @property string|array $pageFormat
+ * @property string|array<mixed> $pageFormat
  * @property string       $pageMargins
  * @property string       $documentAuthor
  * @property string       $documentTitle
@@ -104,7 +104,7 @@ class PdfResponse implements Response
 
 	private bool $multiLanguage = false;
 
-	/** @var bool, REQUIRES symfony/dom-crawler package */
+	/** @var bool REQUIRES symfony/dom-crawler package */
 	private bool $ignoreStylesInHTMLDocument = false;
 
 	private string|Template $source;
@@ -502,8 +502,7 @@ class PdfResponse implements Response
 
 		if ($this->source instanceof Template) {
 			try {
-				/** @noinspection PhpMethodParametersCountMismatchInspection */
-				$html = $this->source->__toString(true);
+				$html = $this->source->__toString();
 			} catch (Throwable $e) {
 				throw new InvalidStateException('Template rendering failed', 0, $e);
 			}
